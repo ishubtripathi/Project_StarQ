@@ -36,7 +36,6 @@ from app.services.vector_service import (
     store_embeddings,
 )
 
-from typing import Annotated
 
 
 
@@ -375,6 +374,7 @@ async def upload_document(
         # --------------------------------------------------
 
         return DocumentResponse(
+            document_id=result["filename"],
             filename=result["filename"],
             file_type=result["file_type"],
             status=result["status"],
@@ -423,7 +423,7 @@ async def upload_document(
 
 @router.post("/upload-multiple")
 async def upload_multiple_documents(
-    files: Annotated[list[UploadFile], File(...)],
+    files: list[UploadFile] = File(...)
 ):
     """
     Upload and process multiple PDF and CSV documents.

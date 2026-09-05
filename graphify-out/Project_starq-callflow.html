@@ -1,0 +1,3125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Project_starq — Complete Call Flow &amp; Architecture Documentation</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<style>
+:root {
+  --bg: #0f172a; --surface: #1e293b; --border: #334155;
+  --text: #e2e8f0; --muted: #94a3b8; --accent: #38bdf8;
+  --warn: #fbbf24; --err: #f87171; --ok: #34d399;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; }
+.container { max-width: 1200px; margin: 0 auto; padding: 40px 24px; }
+h1 { font-size: 2.4rem; margin-bottom: 8px; background: linear-gradient(135deg, var(--accent), #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+h2 { font-size: 1.7rem; margin: 48px 0 16px; padding-bottom: 8px; border-bottom: 2px solid var(--accent); }
+h3 { font-size: 1.25rem; margin: 32px 0 12px; color: var(--accent); }
+h4 { font-size: 1.05rem; margin: 20px 0 8px; color: var(--warn); }
+p { margin: 8px 0; color: var(--muted); }
+.subtitle { color: var(--muted); font-size: 1.1rem; margin-bottom: 32px; }
+.mermaid { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 20px 0; overflow-x: auto; position: relative; }
+.mermaid.is-enhanced { padding: 0; overflow: hidden; min-height: 260px; }
+.mermaid-viewport { padding: 54px 24px 24px; overflow: hidden; cursor: grab; touch-action: none; min-height: 260px; }
+.mermaid-viewport.is-dragging { cursor: grabbing; }
+.mermaid-viewport svg { max-width: none !important; height: auto; transform-origin: 0 0; transition: transform 120ms ease; }
+.mermaid-toolbar { position: absolute; top: 10px; right: 10px; z-index: 3; display: flex; align-items: center; gap: 6px; padding: 6px; background: rgba(15,23,42,0.92); border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.28); }
+.mermaid-toolbar button, .mermaid-toolbar .zoom-level { height: 28px; min-width: 32px; border: 1px solid var(--border); border-radius: 6px; background: #1e293b; color: var(--text); font: 600 0.78rem system-ui, sans-serif; display: inline-flex; align-items: center; justify-content: center; }
+.mermaid-toolbar button { cursor: pointer; }
+.mermaid-toolbar button:hover { border-color: var(--accent); color: var(--accent); }
+.mermaid-toolbar .zoom-level { min-width: 52px; color: var(--muted); background: transparent; }
+.call-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 0.92rem; }
+.call-table th { background: #1a2744; color: var(--accent); text-align: left; padding: 10px 14px; border: 1px solid var(--border); }
+.call-table td { padding: 8px 14px; border: 1px solid var(--border); vertical-align: top; }
+.call-table tr:nth-child(even) { background: rgba(255,255,255,0.02); }
+.tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 600; }
+.tag-async { background: #7c3aed33; color: #a78bfa; }
+.tag-class { background: #05966933; color: var(--ok); }
+.tag-func { background: #2563eb33; color: var(--accent); }
+.tag-cmd { background: #d9770633; color: var(--warn); }
+.tag-endpoint { background: #dc262633; color: var(--err); }
+.tag-hook { background: #db277733; color: #f472b6; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin: 16px 0; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 16px; margin: 16px 0; }
+.arrow-chain { font-family: 'Fira Code', monospace; font-size: 0.85rem; color: var(--accent); padding: 10px; background: rgba(56,189,248,0.06); border-radius: 6px; }
+code { font-family: 'Fira Code', 'Cascadia Code', monospace; background: rgba(255,255,255,0.06); padding: 1px 6px; border-radius: 3px; font-size: 0.88em; }
+ul, ol { margin: 8px 0 8px 24px; color: var(--muted); }
+li { margin: 4px 0; }
+a { color: var(--accent); }
+hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+.nav { position: sticky; top: 0; background: var(--bg); z-index: 10; padding: 12px 0; border-bottom: 1px solid var(--border); display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.9rem; }
+.nav a { text-decoration: none; }
+.nav a:hover { text-decoration: underline; }
+@media (max-width: 768px) { .container { padding: 16px; } h1 { font-size: 1.8rem; } }
+
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>Project_starq — Complete Call Flow &amp; Architecture Documentation</h1>
+<p class="subtitle">Generated from graphify knowledge graph: 322 nodes, 383 edges, 31 communities. Commit: 702a9ad</p>
+
+<div class="nav">
+    <a href="#overview">Architecture Overview</a>
+    <a href="#cli-skills">CLI &amp; Skill Installers</a>
+    <a href="#serve-api">Serving API</a>
+    <a href="#tests-fixtures">Tests &amp; Fixtures</a>
+    <a href="#community-1">Community 1</a>
+    <a href="#community-4">Community 4</a>
+    <a href="#community-6">Community 6</a>
+    <a href="#community-7">Community 7</a>
+    <a href="#community-19">Community 19</a>
+    <a href="#community-20">Community 20</a>
+    <a href="#community-21">Community 21</a>
+    <a href="#community-22">Community 22</a>
+    <a href="#community-23">Community 23</a>
+    <a href="#community-24">Community 24</a>
+    <a href="#community-25">Community 25</a>
+    <a href="#other">Other</a>
+</div>
+
+<!-- ====== Architecture Overview ====== -->
+<h2 id="overview">1. Architecture Overview</h2>
+
+<div class="mermaid">
+
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    CLI_SKILLS_9964CBB8("CLI &amp; Skill Installers<br/><small>30 nodes</small>")
+    class CLI_SKILLS_9964CBB8 module;
+    SERVE_API_35EC8E86("Serving API<br/><small>35 nodes</small>")
+    class SERVE_API_35EC8E86 module;
+    TESTS_FIXTURES_B84B1DCC("Tests &amp; Fixtures<br/><small>144 nodes</small>")
+    class TESTS_FIXTURES_B84B1DCC module;
+    COMMUNITY_1_3073A0DB("Community 1<br/><small>31 nodes</small>")
+    class COMMUNITY_1_3073A0DB module;
+    COMMUNITY_4_AC2DC2A9("Community 4<br/><small>27 nodes</small>")
+    class COMMUNITY_4_AC2DC2A9 module;
+    COMMUNITY_6_7D637A07("Community 6<br/><small>22 nodes</small>")
+    class COMMUNITY_6_7D637A07 module;
+    COMMUNITY_7_989501FC("Community 7<br/><small>21 nodes</small>")
+    class COMMUNITY_7_989501FC module;
+    COMMUNITY_19_9462A0B9("Community 19<br/><small>1 nodes</small>")
+    class COMMUNITY_19_9462A0B9 module;
+    COMMUNITY_20_C86C0F59("Community 20<br/><small>1 nodes</small>")
+    class COMMUNITY_20_C86C0F59 module;
+    COMMUNITY_21_47BA4108("Community 21<br/><small>1 nodes</small>")
+    class COMMUNITY_21_47BA4108 module;
+    COMMUNITY_22_65038249("Community 22<br/><small>1 nodes</small>")
+    class COMMUNITY_22_65038249 module;
+    COMMUNITY_23_58D9DE5D("Community 23<br/><small>1 nodes</small>")
+    class COMMUNITY_23_58D9DE5D module;
+    COMMUNITY_24_ECF60D36("Community 24<br/><small>1 nodes</small>")
+    class COMMUNITY_24_ECF60D36 module;
+    COMMUNITY_25_B1CFFD78("Community 25<br/><small>1 nodes</small>")
+    class COMMUNITY_25_B1CFFD78 module;
+    OTHER_D0941E68("Other<br/><small>5 nodes</small>")
+    class OTHER_D0941E68 module;
+    TESTS_FIXTURES_B84B1DCC -->|contains x2| SERVE_API_35EC8E86
+    CLI_SKILLS_9964CBB8 -->|imports| COMMUNITY_4_AC2DC2A9
+    CLI_SKILLS_9964CBB8 -->|imports| COMMUNITY_1_3073A0DB
+    CLI_SKILLS_9964CBB8 -->|imports| COMMUNITY_7_989501FC
+    COMMUNITY_7_989501FC -->|imports| COMMUNITY_1_3073A0DB
+    COMMUNITY_1_3073A0DB -->|contains| COMMUNITY_7_989501FC
+    COMMUNITY_6_7D637A07 -->|contains| CLI_SKILLS_9964CBB8
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<div class="grid">
+  <div class="card">
+    <h4>Architecture Layers</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>Layer</th><th>Nodes</th><th>Communities</th></tr>
+      <tr><td>CLI &amp; Skill Installers</td><td>30</td><td><code>9, 11, 17</code></td></tr><tr><td>Serving API</td><td>35</td><td><code>0, 18</code></td></tr><tr><td>Tests &amp; Fixtures</td><td>144</td><td><code>2, 3, 5, 8, 10, 12, 13, 14, 15, 16</code></td></tr><tr><td>Community 1</td><td>31</td><td><code>1</code></td></tr><tr><td>Community 4</td><td>27</td><td><code>4</code></td></tr><tr><td>Community 6</td><td>22</td><td><code>6</code></td></tr><tr><td>Community 7</td><td>21</td><td><code>7</code></td></tr><tr><td>Community 19</td><td>1</td><td><code>19</code></td></tr><tr><td>Community 20</td><td>1</td><td><code>20</code></td></tr><tr><td>Community 21</td><td>1</td><td><code>21</code></td></tr><tr><td>Community 22</td><td>1</td><td><code>22</code></td></tr><tr><td>Community 23</td><td>1</td><td><code>23</code></td></tr><tr><td>Community 24</td><td>1</td><td><code>24</code></td></tr><tr><td>Community 25</td><td>1</td><td><code>25</code></td></tr><tr><td>Other</td><td>5</td><td><code>26, 27, 28, 29, 30</code></td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Core Flow</h4>
+    <div class="arrow-chain">Tests &amp; Fixtures -&gt; Serving API -&gt; CLI &amp; Skill Installers -&gt; Community 7 -&gt; Community 1 -&gt; Community 4 -&gt; Community 6</div>
+  </div>
+</div>
+<div class="grid">
+  <div class="card">
+    <h4>Graph Report Highlights</h4>
+    <ul>
+      <li>322 nodes · 383 edges · 31 communities</li>
+      <li>Extraction: 77% EXTRACTED · 23% INFERRED · 0% AMBIGUOUS · INFERRED: 87 edges (avg confidence: 0.8)</li>
+      <li>Token cost: 0 input · 0 output</li>
+      <li>1. `create_document_chunks()` - 12 edges</li>
+      <li>2. `process_csv_file()` - 11 edges</li>
+      <li>3. `process_query()` - 11 edges</li>
+    </ul>
+  </div>
+</div>
+<hr>
+<!-- ====== 2. CLI & Skill Installers ====== -->
+<h2 id="cli-skills">2. CLI &amp; Skill Installers</h2>
+<p>CLI &amp; Skill Installers groups implementation around frontend, readmemd, components, layout, mostly in README.md, components/layout/Sidebar.tsx, components/layout/MobileHeader.tsx. This section covers 30 nodes and 27 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: CLI &amp; Skill Installers (30 nodes, 27 edges)
+    subgraph cli_skills_components_layout_Sidebar_tsx_f4da4930["components/layout/Sidebar.tsx"]
+        frontend_src_components_layout_sidebar_tsx_26833fcc("Sidebar.tsx")
+        layout_sidebar_sidebar_35d99ee2("Sidebar()<br/><small>components/layout/Sidebar.tsx</small>")
+        layout_sidebar_sidebarprops_a0b10738("SidebarProps<br/><small>components/layout/Sidebar.tsx</small>")
+        layout_sidebar_navigation_883237f3("navigation<br/><small>components/layout/Sidebar.tsx</small>")
+    end
+    subgraph cli_skills_components_layout_MobileHeader_tsx_e436c22c["components/layout/MobileHeader.tsx"]
+        frontend_src_components_layout_mobileheader_tsx_a192c39e("MobileHeader.tsx")
+        layout_mobileheader_mobileheader_f78f51a5("MobileHeader()<br/><small>components/layout/MobileHeader.tsx</small>")
+        layout_mobileheader_mobileheaderprops_cc428c98("MobileHeaderProps<br/><small>components/layout/MobileHeader.tsx</small>")
+    end
+    subgraph cli_skills_backend_app_main_py_12c42a71["backend/app/main.py"]
+        backend_app_main_py_f032032e("main.py")
+        app_main_root_894bfe73("root()<br/><small>backend/app/main.py</small>")
+    end
+    subgraph cli_skills_components_layout_AppLayout_tsx_bbca782a["components/layout/AppLayout.tsx"]
+        frontend_src_components_layout_applayout_tsx_802685f6("AppLayout.tsx")
+        layout_applayout_applayout_7d4839c6("AppLayout()<br/><small>components/layout/AppLayout.tsx</small>")
+    end
+    subgraph cli_skills_frontend_src_App_tsx_72fa47f4["frontend/src/App.tsx"]
+        frontend_src_app_tsx_cd342beb("App.tsx")
+        src_app_app_f316b20d("App()<br/><small>frontend/src/App.tsx</small>")
+    end
+    subgraph cli_skills_src_pages_Collections_tsx_1656b674["src/pages/Collections.tsx"]
+        frontend_src_pages_collections_tsx_cd00155a("Collections.tsx")
+        pages_collections_collections_e722fbc3("Collections()<br/><small>src/pages/Collections.tsx</small>")
+    end
+    subgraph cli_skills_src_pages_Settings_tsx_c92053e3["src/pages/Settings.tsx"]
+        frontend_src_pages_settings_tsx_6b0a7beb("Settings.tsx")
+        pages_settings_settings_9c44556a("Settings()<br/><small>src/pages/Settings.tsx</small>")
+    end
+    frontend_src_main_tsx_b540b758("main.tsx")
+    frontend_src_app_tsx_cd342beb -->|imports| frontend_src_components_layout_applayout_tsx_802685f6
+    frontend_src_app_tsx_cd342beb -->|imports| frontend_src_pages_collections_tsx_cd00155a
+    frontend_src_app_tsx_cd342beb -->|imports| frontend_src_pages_settings_tsx_6b0a7beb
+    frontend_src_app_tsx_cd342beb -->|imports| frontend_src_main_tsx_b540b758
+    frontend_src_components_layout_applayout_tsx_802685f6 -->|imports| frontend_src_components_layout_sidebar_tsx_26833fcc
+    frontend_src_components_layout_applayout_tsx_802685f6 -->|imports| frontend_src_components_layout_mobileheader_tsx_a192c39e
+    %% Omitted for readability: 12 nodes, 0 edges
+    class frontend_src_components_layout_sidebar_tsx_26833fcc ui;
+    class layout_sidebar_sidebar_35d99ee2 ui;
+    class layout_sidebar_sidebarprops_a0b10738 ui;
+    class layout_sidebar_navigation_883237f3 ui;
+    class frontend_src_components_layout_mobileheader_tsx_a192c39e ui;
+    class layout_mobileheader_mobileheader_f78f51a5 ui;
+    class layout_mobileheader_mobileheaderprops_cc428c98 ui;
+    class backend_app_main_py_f032032e module;
+    class app_main_root_894bfe73 function;
+    class frontend_src_components_layout_applayout_tsx_802685f6 ui;
+    class layout_applayout_applayout_7d4839c6 ui;
+    class frontend_src_app_tsx_cd342beb ui;
+    class src_app_app_f316b20d ui;
+    class frontend_src_pages_collections_tsx_cd00155a ui;
+    class pages_collections_collections_e722fbc3 ui;
+    class frontend_src_pages_settings_tsx_6b0a7beb ui;
+    class pages_settings_settings_9c44556a ui;
+    class frontend_src_main_tsx_b540b758 ui;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>App.tsx</code><br><small style="color:var(--muted)">frontend/src/App.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>AppLayout.tsx</code><br><small style="color:var(--muted)">components/layout/AppLayout.tsx</small><br><code>Collections.tsx</code><br><small style="color:var(--muted)">src/pages/Collections.tsx</small><br><code>main.tsx</code><br><small style="color:var(--muted)">frontend/src/main.tsx</small><br>+1 more</td>
+  <td>Module file in frontend/src/App.tsx.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>App()</code><br><small style="color:var(--muted)">frontend/src/App.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>App() node in frontend/src/App.tsx.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>main.tsx</code><br><small style="color:var(--muted)">frontend/src/main.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>App.tsx</code><br><small style="color:var(--muted)">frontend/src/App.tsx</small></td>
+  <td>No direct outbound edge</td>
+  <td>Module file in frontend/src/main.tsx.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>AppLayout.tsx</code><br><small style="color:var(--muted)">components/layout/AppLayout.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>App.tsx</code><br><small style="color:var(--muted)">frontend/src/App.tsx</small></td>
+  <td><code>MobileHeader.tsx</code><br><small style="color:var(--muted)">components/layout/MobileHeader.tsx</small><br><code>Sidebar.tsx</code><br><small style="color:var(--muted)">components/layout/Sidebar.tsx</small></td>
+  <td>Module file in components/layout/AppLayout.tsx.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>AppLayout()</code><br><small style="color:var(--muted)">components/layout/AppLayout.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>AppLayout() node in components/layout/AppLayout.tsx.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>MobileHeader.tsx</code><br><small style="color:var(--muted)">components/layout/MobileHeader.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>AppLayout.tsx</code><br><small style="color:var(--muted)">components/layout/AppLayout.tsx</small></td>
+  <td>No direct outbound edge</td>
+  <td>Module file in components/layout/MobileHeader.tsx.</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>MobileHeaderProps</code><br><small style="color:var(--muted)">components/layout/MobileHeader.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>MobileHeaderProps node in components/layout/MobileHeader.tsx.</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td><code>MobileHeader()</code><br><small style="color:var(--muted)">components/layout/MobileHeader.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>MobileHeader() node in components/layout/MobileHeader.tsx.</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td><code>Sidebar.tsx</code><br><small style="color:var(--muted)">components/layout/Sidebar.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>AppLayout.tsx</code><br><small style="color:var(--muted)">components/layout/AppLayout.tsx</small></td>
+  <td>No direct outbound edge</td>
+  <td>Module file in components/layout/Sidebar.tsx.</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td><code>SidebarProps</code><br><small style="color:var(--muted)">components/layout/Sidebar.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Organizes documentation pages, navigation, or content lookup.</td>
+</tr>
+<tr>
+  <td>11</td>
+  <td><code>navigation</code><br><small style="color:var(--muted)">components/layout/Sidebar.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>navigation node in components/layout/Sidebar.tsx.</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td><code>Sidebar()</code><br><small style="color:var(--muted)">components/layout/Sidebar.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Organizes documentation pages, navigation, or content lookup.</td>
+</tr>
+<tr>
+  <td>13</td>
+  <td><code>Collections.tsx</code><br><small style="color:var(--muted)">src/pages/Collections.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>App.tsx</code><br><small style="color:var(--muted)">frontend/src/App.tsx</small></td>
+  <td>No direct outbound edge</td>
+  <td>Module file in src/pages/Collections.tsx.</td>
+</tr>
+<tr>
+  <td>14</td>
+  <td><code>Collections()</code><br><small style="color:var(--muted)">src/pages/Collections.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Collections() node in src/pages/Collections.tsx.</td>
+</tr>
+<tr>
+  <td>15</td>
+  <td><code>Settings.tsx</code><br><small style="color:var(--muted)">src/pages/Settings.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>App.tsx</code><br><small style="color:var(--muted)">frontend/src/App.tsx</small></td>
+  <td>No direct outbound edge</td>
+  <td>Module file in src/pages/Settings.tsx.</td>
+</tr>
+<tr>
+  <td>16</td>
+  <td><code>Settings()</code><br><small style="color:var(--muted)">src/pages/Settings.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Settings() node in src/pages/Settings.tsx.</td>
+</tr>
+<tr>
+  <td>17</td>
+  <td><code>Local Setup</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Local Setup.</td>
+</tr>
+<tr>
+  <td>18</td>
+  <td><code>1. Clone the repository</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing 1. Clone the repository.</td>
+</tr>
+<tr>
+  <td>19</td>
+  <td><code>code:bash (git clone https://github.com/vibhupratap-007/rag-based-syste)</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing code:bash (git clone https://github.com/vibhupratap-007/rag-based-syste).</td>
+</tr>
+<tr>
+  <td>20</td>
+  <td><code>2. Create virtual environment</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing 2. Create virtual environment.</td>
+</tr>
+<tr>
+  <td>21</td>
+  <td><code>code:bash (python -m venv venv)</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing code:bash (python -m venv venv).</td>
+</tr>
+<tr>
+  <td>22</td>
+  <td><code>3. Activate virtual environment</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing 3. Activate virtual environment.</td>
+</tr>
+<tr>
+  <td>23</td>
+  <td><code>code:bash (venv\Scripts\activate)</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing code:bash (venv\Scripts\activate).</td>
+</tr>
+<tr>
+  <td>24</td>
+  <td><code>code:bash (source venv/bin/activate)</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing code:bash (source venv/bin/activate).</td>
+</tr>
+<tr>
+  <td>25</td>
+  <td><code>4. Install dependencies</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing 4. Install dependencies.</td>
+</tr>
+<tr>
+  <td>26</td>
+  <td><code>code:bash (pip install -r requirements.txt)</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing code:bash (pip install -r requirements.txt).</td>
+</tr>
+<tr>
+  <td>27</td>
+  <td><code>5. Start the backend</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing 5. Start the backend.</td>
+</tr>
+<tr>
+  <td>28</td>
+  <td><code>code:bash (uvicorn app.main:app --reload)</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing code:bash (uvicorn app.main:app --reload).</td>
+</tr>
+<tr>
+  <td>29</td>
+  <td><code>main.py</code><br><small style="color:var(--muted)">backend/app/main.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Module file in backend/app/main.py.</td>
+</tr>
+<tr>
+  <td>30</td>
+  <td><code>root()</code><br><small style="color:var(--muted)">backend/app/main.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>root() node in backend/app/main.py.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>README.md</code></td><td>12 nodes</td></tr>
+<tr><td><code>components/layout/Sidebar.tsx</code></td><td>4 nodes</td></tr>
+<tr><td><code>components/layout/MobileHeader.tsx</code></td><td>3 nodes</td></tr>
+<tr><td><code>backend/app/main.py</code></td><td>2 nodes</td></tr>
+<tr><td><code>frontend/src/App.tsx</code></td><td>2 nodes</td></tr>
+<tr><td><code>components/layout/AppLayout.tsx</code></td><td>2 nodes</td></tr>
+<tr><td><code>src/pages/Collections.tsx</code></td><td>2 nodes</td></tr>
+<tr><td><code>src/pages/Settings.tsx</code></td><td>2 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x21, imports x6. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 3. Serving API ====== -->
+<h2 id="serve-api">3. Serving API</h2>
+<p>Serving API groups implementation around backend, app, csv, servicepy, mostly in api/routes/documents.py, app/services/csv_service.py, app/services/pdf_service.py. This section covers 35 nodes and 47 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Serving API (35 nodes, 47 edges)
+    subgraph serve_api_api_routes_documents_py_c157516b["api/routes/documents.py"]
+        routes_documents_process_csv_file_c562c584("process_csv_file()<br/><small>api/routes/documents.py</small>")
+        routes_documents_process_pdf_file_f0719232("process_pdf_file()<br/><small>api/routes/documents.py</small>")
+        routes_documents_save_uploaded_file_75a9a4ac("save_uploaded_file()<br/><small>api/routes/documents.py</small>")
+        routes_documents_upload_document_501e5d91("upload_document()<br/><small>api/routes/documents.py</small>")
+        routes_documents_upload_multiple_documents_936e97cb("upload_multiple_documents()<br/><small>api/routes/documents.py</small>")
+        backend_app_api_routes_documents_py_969a67fb("documents.py")
+    end
+    subgraph serve_api_app_services_csv_service_py_0762ed0c["app/services/csv_service.py"]
+        backend_app_services_csv_service_py_5a2f7412("csv_service.py")
+        services_csv_service_detect_csv_schema_741c8946("detect_csv_schema()<br/><small>app/services/csv_service.py</small>")
+        services_csv_service_parse_csv_57dbd187("parse_csv()<br/><small>app/services/csv_service.py</small>")
+        services_csv_service_profile_csv_data_e61f584e("profile_csv_data()<br/><small>app/services/csv_service.py</small>")
+        services_csv_service_validate_csv_9b4b233d("validate_csv()<br/><small>app/services/csv_service.py</small>")
+    end
+    subgraph serve_api_app_services_pdf_service_py_ff22e10e["app/services/pdf_service.py"]
+        services_pdf_service_extract_pdf_metadata_cf712c78("extract_pdf_metadata()<br/><small>app/services/pdf_service.py</small>")
+        services_pdf_service_extract_pdf_text_2a6674d7("extract_pdf_text()<br/><small>app/services/pdf_service.py</small>")
+        backend_app_services_pdf_service_py_73952bc1("pdf_service.py")
+        services_pdf_service_validate_pdf_10e1af15("validate_pdf()<br/><small>app/services/pdf_service.py</small>")
+    end
+    subgraph serve_api_api_routes_health_py_7c60ec39["api/routes/health.py"]
+        backend_app_api_routes_health_py_fc179112("health.py")
+        routes_health_health_check_8bfe1a36("health_check()<br/><small>api/routes/health.py</small>")
+    end
+    services_embedding_service_generate_chunk_embedd_eced0b61("generate_chunk_embeddings()<br/><small>app/services/embedding_service.py</small>")
+    routes_documents_save_uploaded_file_75a9a4ac -->|calls| routes_documents_upload_document_501e5d91
+    routes_documents_save_uploaded_file_75a9a4ac -->|calls| routes_documents_upload_multiple_documents_936e97cb
+    routes_documents_process_pdf_file_f0719232 -->|calls| routes_documents_upload_document_501e5d91
+    routes_documents_process_pdf_file_f0719232 -->|calls| routes_documents_upload_multiple_documents_936e97cb
+    routes_documents_process_csv_file_c562c584 -->|calls| routes_documents_upload_document_501e5d91
+    routes_documents_process_csv_file_c562c584 -->|calls| routes_documents_upload_multiple_documents_936e97cb
+    %% Omitted for readability: 17 nodes, 0 edges
+    class routes_documents_process_csv_file_c562c584 function;
+    class routes_documents_process_pdf_file_f0719232 function;
+    class routes_documents_save_uploaded_file_75a9a4ac function;
+    class routes_documents_upload_document_501e5d91 function;
+    class routes_documents_upload_multiple_documents_936e97cb function;
+    class backend_app_api_routes_documents_py_969a67fb module;
+    class backend_app_services_csv_service_py_5a2f7412 module;
+    class services_csv_service_detect_csv_schema_741c8946 function;
+    class services_csv_service_parse_csv_57dbd187 function;
+    class services_csv_service_profile_csv_data_e61f584e function;
+    class services_csv_service_validate_csv_9b4b233d function;
+    class services_pdf_service_extract_pdf_metadata_cf712c78 function;
+    class services_pdf_service_extract_pdf_text_2a6674d7 function;
+    class backend_app_services_pdf_service_py_73952bc1 module;
+    class services_pdf_service_validate_pdf_10e1af15 function;
+    class backend_app_api_routes_health_py_fc179112 module;
+    class routes_health_health_check_8bfe1a36 function;
+    class services_embedding_service_generate_chunk_embedd_eced0b61 function;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>documents.py</code><br><small style="color:var(--muted)">api/routes/documents.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Module file in api/routes/documents.py.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>save_uploaded_file()</code><br><small style="color:var(--muted)">api/routes/documents.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>upload_document()</code><br><small style="color:var(--muted)">api/routes/documents.py</small><br><code>upload_multiple_documents()</code><br><small style="color:var(--muted)">api/routes/documents.py</small></td>
+  <td>save_uploaded_file() node in api/routes/documents.py.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>process_pdf_file()</code><br><small style="color:var(--muted)">api/routes/documents.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>extract_pdf_metadata()</code><br><small style="color:var(--muted)">app/services/pdf_service.py</small><br><code>extract_pdf_text()</code><br><small style="color:var(--muted)">app/services/pdf_service.py</small><br><code>generate_chunk_embeddings()</code><br><small style="color:var(--muted)">app/services/embedding_service.py</small><br>+4 more</td>
+  <td>process_pdf_file() node in api/routes/documents.py.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>process_csv_file()</code><br><small style="color:var(--muted)">api/routes/documents.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>detect_csv_schema()</code><br><small style="color:var(--muted)">app/services/csv_service.py</small><br><code>generate_chunk_embeddings()</code><br><small style="color:var(--muted)">app/services/embedding_service.py</small><br><code>parse_csv()</code><br><small style="color:var(--muted)">app/services/csv_service.py</small><br>+5 more</td>
+  <td>process_csv_file() node in api/routes/documents.py.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>upload_document()</code><br><small style="color:var(--muted)">api/routes/documents.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>process_csv_file()</code><br><small style="color:var(--muted)">api/routes/documents.py</small><br><code>process_pdf_file()</code><br><small style="color:var(--muted)">api/routes/documents.py</small><br><code>save_uploaded_file()</code><br><small style="color:var(--muted)">api/routes/documents.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>upload_document() node in api/routes/documents.py.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>upload_multiple_documents()</code><br><small style="color:var(--muted)">api/routes/documents.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>process_csv_file()</code><br><small style="color:var(--muted)">api/routes/documents.py</small><br><code>process_pdf_file()</code><br><small style="color:var(--muted)">api/routes/documents.py</small><br><code>save_uploaded_file()</code><br><small style="color:var(--muted)">api/routes/documents.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>upload_multiple_documents() node in api/routes/documents.py.</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>Save an uploaded file to a temporary location.      The file is written in chu</code><br><small style="color:var(--muted)">api/routes/documents.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Save an uploaded file to a temporary location.      The file is written in chu.</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td><code>Validate, extract, chunk, embed and store a PDF.</code><br><small style="color:var(--muted)">api/routes/documents.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Validate, extract, chunk, embed and store a PDF..</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td><code>Validate, parse, profile, chunk, embed and store a CSV.</code><br><small style="color:var(--muted)">api/routes/documents.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Validate, parse, profile, chunk, embed and store a CSV..</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td><code>Upload and process a single PDF or CSV document.      Pipeline:          Upl</code><br><small style="color:var(--muted)">api/routes/documents.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Upload and process a single PDF or CSV document.      Pipeline:          Upl.</td>
+</tr>
+<tr>
+  <td>11</td>
+  <td><code>Upload and process multiple PDF and CSV documents.      Each document is proce</code><br><small style="color:var(--muted)">api/routes/documents.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Upload and process multiple PDF and CSV documents.      Each document is proce.</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td><code>csv_service.py</code><br><small style="color:var(--muted)">app/services/csv_service.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Module file in app/services/csv_service.py.</td>
+</tr>
+<tr>
+  <td>13</td>
+  <td><code>validate_csv()</code><br><small style="color:var(--muted)">app/services/csv_service.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>process_csv_file()</code><br><small style="color:var(--muted)">api/routes/documents.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>validate_csv() node in app/services/csv_service.py.</td>
+</tr>
+<tr>
+  <td>14</td>
+  <td><code>parse_csv()</code><br><small style="color:var(--muted)">app/services/csv_service.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>process_csv_file()</code><br><small style="color:var(--muted)">api/routes/documents.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>parse_csv() node in app/services/csv_service.py.</td>
+</tr>
+<tr>
+  <td>15</td>
+  <td><code>detect_csv_schema()</code><br><small style="color:var(--muted)">app/services/csv_service.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>process_csv_file()</code><br><small style="color:var(--muted)">api/routes/documents.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>detect_csv_schema() node in app/services/csv_service.py.</td>
+</tr>
+<tr>
+  <td>16</td>
+  <td><code>profile_csv_data()</code><br><small style="color:var(--muted)">app/services/csv_service.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>process_csv_file()</code><br><small style="color:var(--muted)">api/routes/documents.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>profile_csv_data() node in app/services/csv_service.py.</td>
+</tr>
+<tr>
+  <td>17</td>
+  <td><code>Validate CSV structure and collect basic information.</code><br><small style="color:var(--muted)">app/services/csv_service.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Validate CSV structure and collect basic information..</td>
+</tr>
+<tr>
+  <td>18</td>
+  <td><code>Parse CSV data into structured records.</code><br><small style="color:var(--muted)">app/services/csv_service.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Parse CSV data into structured records..</td>
+</tr>
+<tr>
+  <td>19</td>
+  <td><code>Detect basic schema information for CSV columns.</code><br><small style="color:var(--muted)">app/services/csv_service.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Detect basic schema information for CSV columns..</td>
+</tr>
+<tr>
+  <td>20</td>
+  <td><code>Generate basic profiling statistics for CSV columns.</code><br><small style="color:var(--muted)">app/services/csv_service.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Generate basic profiling statistics for CSV columns..</td>
+</tr>
+<tr>
+  <td>21</td>
+  <td><code>generate_chunk_embeddings()</code><br><small style="color:var(--muted)">app/services/embedding_service.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>process_csv_file()</code><br><small style="color:var(--muted)">api/routes/documents.py</small><br><code>process_pdf_file()</code><br><small style="color:var(--muted)">api/routes/documents.py</small></td>
+  <td><code>test_phase4_pipeline()</code><br><small style="color:var(--muted)">backend/tests/test_phase4.py</small></td>
+  <td>generate_chunk_embeddings() node in app/services/embedding_service.py.</td>
+</tr>
+<tr>
+  <td>22</td>
+  <td><code>Generate embeddings for document chunks in batches.</code><br><small style="color:var(--muted)">app/services/embedding_service.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Generate embeddings for document chunks in batches..</td>
+</tr>
+<tr>
+  <td>23</td>
+  <td><code>pdf_service.py</code><br><small style="color:var(--muted)">app/services/pdf_service.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Module file in app/services/pdf_service.py.</td>
+</tr>
+<tr>
+  <td>24</td>
+  <td><code>validate_pdf()</code><br><small style="color:var(--muted)">app/services/pdf_service.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>process_pdf_file()</code><br><small style="color:var(--muted)">api/routes/documents.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>validate_pdf() node in app/services/pdf_service.py.</td>
+</tr>
+<tr>
+  <td>25</td>
+  <td><code>extract_pdf_text()</code><br><small style="color:var(--muted)">app/services/pdf_service.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>process_pdf_file()</code><br><small style="color:var(--muted)">api/routes/documents.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>extract_pdf_text() node in app/services/pdf_service.py.</td>
+</tr>
+<tr>
+  <td>26</td>
+  <td><code>extract_pdf_metadata()</code><br><small style="color:var(--muted)">app/services/pdf_service.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>process_pdf_file()</code><br><small style="color:var(--muted)">api/routes/documents.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>extract_pdf_metadata() node in app/services/pdf_service.py.</td>
+</tr>
+<tr>
+  <td>27</td>
+  <td><code>Validate a PDF file using its file path.</code><br><small style="color:var(--muted)">app/services/pdf_service.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Validate a PDF file using its file path..</td>
+</tr>
+<tr>
+  <td>28</td>
+  <td><code>Extract PDF text page by page.</code><br><small style="color:var(--muted)">app/services/pdf_service.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Extract PDF text page by page..</td>
+</tr>
+<tr>
+  <td>29</td>
+  <td><code>Extract PDF metadata and document statistics.</code><br><small style="color:var(--muted)">app/services/pdf_service.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Extract PDF metadata and document statistics..</td>
+</tr>
+<tr>
+  <td>30</td>
+  <td><code>store_embeddings()</code><br><small style="color:var(--muted)">app/services/vector_service.py</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>process_csv_file()</code><br><small style="color:var(--muted)">api/routes/documents.py</small><br><code>process_pdf_file()</code><br><small style="color:var(--muted)">api/routes/documents.py</small></td>
+  <td><code>test_phase4_pipeline()</code><br><small style="color:var(--muted)">backend/tests/test_phase4.py</small></td>
+  <td>store_embeddings() node in app/services/vector_service.py.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>api/routes/documents.py</code></td><td>11 nodes</td></tr>
+<tr><td><code>app/services/csv_service.py</code></td><td>9 nodes</td></tr>
+<tr><td><code>app/services/pdf_service.py</code></td><td>7 nodes</td></tr>
+<tr><td><code>api/routes/health.py</code></td><td>2 nodes</td></tr>
+<tr><td><code>app/services/embedding_service.py</code></td><td>2 nodes</td></tr>
+<tr><td><code>app/services/vector_service.py</code></td><td>2 nodes</td></tr>
+<tr><td><code>backend/tests/test_phase4.py</code></td><td>2 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x14, explains x14, calls x6. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 4. Tests & Fixtures ====== -->
+<h2 id="tests-fixtures">4. Tests &amp; Fixtures</h2>
+<p>Tests &amp; Fixtures groups implementation around test, backend, tests, servicepy, mostly in app/services/rag_service.py, app/services/content_service.py, app/services/insight_service.py. This section covers 144 nodes and 177 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Tests &amp; Fixtures (144 nodes, 177 edges)
+    subgraph tests_fixtures_app_services_content_service_py_bbeef6b6["app/services/content_service.py"]
+        services_content_service_prepare_pdf_content_9e888734("prepare_pdf_content()<br/><small>app/services/content_service.py</small>")
+        services_content_service_prepare_csv_content_f76037af("prepare_csv_content()<br/><small>app/services/content_service.py</small>")
+        services_content_service_clean_text_014ab863("clean_text()<br/><small>app/services/content_service.py</small>")
+        services_content_service_chunk_text_b919ad81("chunk_text()<br/><small>app/services/content_service.py</small>")
+        services_content_service_create_document_chunks_4c01b964("create_document_chunks()<br/><small>app/services/content_service.py</small>")
+    end
+    subgraph tests_fixtures_app_services_rag_service_py_d6059122["app/services/rag_service.py"]
+        services_rag_service_process_query_15a1933d("process_query()<br/><small>app/services/rag_service.py</small>")
+        services_rag_service_build_sources_6bff1056("build_sources()<br/><small>app/services/rag_service.py</small>")
+        services_rag_service_build_context_9b6a17cc("build_context()<br/><small>app/services/rag_service.py</small>")
+        services_rag_service_build_rag_prompt_cd87305e("build_rag_prompt()<br/><small>app/services/rag_service.py</small>")
+    end
+    subgraph tests_fixtures_api_routes_query_py_25f8e350["api/routes/query.py"]
+        routes_query_queryrequest_207d8ad1("QueryRequest<br/><small>api/routes/query.py</small>")
+        backend_app_api_routes_query_py_b820768b("query.py")
+    end
+    subgraph tests_fixtures_app_services_insight_service_py_1dd66dc6["app/services/insight_service.py"]
+        services_insight_service_build_insight_prompt_6ed03300("build_insight_prompt()<br/><small>app/services/insight_service.py</small>")
+        services_insight_service_extract_important_infor_aa97e518("extract important information()<br/><small>app/services/insight_service.py</small>")
+    end
+    subgraph tests_fixtures_backend_tests_test_pdf_statistics_eeb6bc32["backend/tests/test_pdf_statistics.py"]
+        tests_test_pdf_statistics_create_test_pdf_78a3f293("create_test_pdf()<br/><small>backend/tests/test_pdf_statistics.py</small>")
+        tests_test_pdf_statistics_test_pdf_statistics_4832462f("test_pdf_statistics()<br/><small>backend/tests/test_pdf_statistics.py</small>")
+    end
+    subgraph tests_fixtures_backend_tests_test_similarity_sea_dd7779f9["backend/tests/test_similarity_search.py"]
+        tests_test_similarity_search_setup_test_data_09c4375a("setup_test_data()<br/><small>backend/tests/test_similarity_search.py</small>")
+        tests_test_similarity_search_test_similarity_sea_0ac4aeb3("test_similarity_search()<br/><small>backend/tests/test_similarity_search.py</small>")
+    end
+    basemodel_a0392da1("BaseModel")
+    services_content_service_prepare_pdf_content_9e888734 -->|calls| services_content_service_clean_text_014ab863
+    services_content_service_prepare_pdf_content_9e888734 -->|calls| services_content_service_chunk_text_b919ad81
+    services_content_service_prepare_pdf_content_9e888734 -->|calls| services_content_service_create_document_chunks_4c01b964
+    services_content_service_prepare_csv_content_f76037af -->|calls| services_content_service_create_document_chunks_4c01b964
+    services_insight_service_build_insight_prompt_6ed03300 -->|calls| services_insight_service_extract_important_infor_aa97e518
+    services_rag_service_build_sources_6bff1056 -->|calls| services_rag_service_process_query_15a1933d
+    services_rag_service_process_query_15a1933d -->|calls| services_rag_service_build_context_9b6a17cc
+    services_rag_service_process_query_15a1933d -->|calls| services_rag_service_build_rag_prompt_cd87305e
+    tests_test_pdf_statistics_create_test_pdf_78a3f293 -->|calls| tests_test_pdf_statistics_test_pdf_statistics_4832462f
+    tests_test_similarity_search_setup_test_data_09c4375a -->|calls| tests_test_similarity_search_test_similarity_sea_0ac4aeb3
+    %% Omitted for readability: 126 nodes, 0 edges
+    class services_content_service_prepare_pdf_content_9e888734 function;
+    class services_content_service_prepare_csv_content_f76037af function;
+    class services_content_service_clean_text_014ab863 function;
+    class services_content_service_chunk_text_b919ad81 function;
+    class services_content_service_create_document_chunks_4c01b964 function;
+    class services_rag_service_process_query_15a1933d function;
+    class services_rag_service_build_sources_6bff1056 function;
+    class services_rag_service_build_context_9b6a17cc function;
+    class services_rag_service_build_rag_prompt_cd87305e function;
+    class routes_query_queryrequest_207d8ad1 klass;
+    class backend_app_api_routes_query_py_b820768b module;
+    class services_insight_service_build_insight_prompt_6ed03300 function;
+    class services_insight_service_extract_important_infor_aa97e518 function;
+    class tests_test_pdf_statistics_create_test_pdf_78a3f293 test;
+    class tests_test_pdf_statistics_test_pdf_statistics_4832462f test;
+    class tests_test_similarity_search_setup_test_data_09c4375a test;
+    class tests_test_similarity_search_test_similarity_sea_0ac4aeb3 test;
+    class basemodel_a0392da1 klass;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>rag_service.py</code><br><small style="color:var(--muted)">app/services/rag_service.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Module file in app/services/rag_service.py.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>build_sources()</code><br><small style="color:var(--muted)">app/services/rag_service.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>process_query()</code><br><small style="color:var(--muted)">app/services/rag_service.py</small><br><code>test_csv_sources()</code><br><small style="color:var(--muted)">backend/tests/test_source_handling.py</small><br><code>test_empty_sources()</code><br><small style="color:var(--muted)">backend/tests/test_source_handling.py</small><br>+2 more</td>
+  <td>build_sources() node in app/services/rag_service.py.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>process_query()</code><br><small style="color:var(--muted)">app/services/rag_service.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>build_sources()</code><br><small style="color:var(--muted)">app/services/rag_service.py</small><br><code>generate_answer()</code><br><small style="color:var(--muted)">app/services/llm_service.py</small><br><code>query_documents()</code><br><small style="color:var(--muted)">api/routes/query.py</small></td>
+  <td><code>build_context()</code><br><small style="color:var(--muted)">app/services/rag_service.py</small><br><code>build_rag_prompt()</code><br><small style="color:var(--muted)">app/services/rag_service.py</small><br><code>format_retrieval_results()</code><br><small style="color:var(--muted)">app/services/retrieval_service.py</small><br>+4 more</td>
+  <td>process_query() node in app/services/rag_service.py.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>build_context()</code><br><small style="color:var(--muted)">app/services/rag_service.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>process_query()</code><br><small style="color:var(--muted)">app/services/rag_service.py</small></td>
+  <td><code>test_csv_context()</code><br><small style="color:var(--muted)">backend/tests/test_context_builder.py</small><br><code>test_empty_context()</code><br><small style="color:var(--muted)">backend/tests/test_context_builder.py</small><br><code>test_pdf_context()</code><br><small style="color:var(--muted)">backend/tests/test_context_builder.py</small></td>
+  <td>build_context() node in app/services/rag_service.py.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>build_rag_prompt()</code><br><small style="color:var(--muted)">app/services/rag_service.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>process_query()</code><br><small style="color:var(--muted)">app/services/rag_service.py</small></td>
+  <td><code>test_empty_context()</code><br><small style="color:var(--muted)">backend/tests/test_prompt_builder.py</small><br><code>test_empty_query()</code><br><small style="color:var(--muted)">backend/tests/test_prompt_builder.py</small><br><code>test_rag_prompt()</code><br><small style="color:var(--muted)">backend/tests/test_prompt_builder.py</small></td>
+  <td>Builds structured prompts for model calls.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>Build clean source information from     retrieved document chunks.</code><br><small style="color:var(--muted)">app/services/rag_service.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Build clean source information from     retrieved document chunks..</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>Build a structured context from retrieved chunks.</code><br><small style="color:var(--muted)">app/services/rag_service.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Build a structured context from retrieved chunks..</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td><code>Build a grounded RAG prompt for the LLM.</code><br><small style="color:var(--muted)">app/services/rag_service.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Build a grounded RAG prompt for the LLM..</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td><code>test_context_builder.py</code><br><small style="color:var(--muted)">backend/tests/test_context_builder.py</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Module file in backend/tests/test_context_builder.py.</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td><code>test_pdf_context()</code><br><small style="color:var(--muted)">backend/tests/test_context_builder.py</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td><code>build_context()</code><br><small style="color:var(--muted)">app/services/rag_service.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>Verifies imports, entry points, or version behavior.</td>
+</tr>
+<tr>
+  <td>11</td>
+  <td><code>test_csv_context()</code><br><small style="color:var(--muted)">backend/tests/test_context_builder.py</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td><code>build_context()</code><br><small style="color:var(--muted)">app/services/rag_service.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>Verifies imports, entry points, or version behavior.</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td><code>test_empty_context()</code><br><small style="color:var(--muted)">backend/tests/test_context_builder.py</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td><code>build_context()</code><br><small style="color:var(--muted)">app/services/rag_service.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>Verifies imports, entry points, or version behavior.</td>
+</tr>
+<tr>
+  <td>13</td>
+  <td><code>test_no_answer.py</code><br><small style="color:var(--muted)">backend/tests/test_no_answer.py</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Module file in backend/tests/test_no_answer.py.</td>
+</tr>
+<tr>
+  <td>14</td>
+  <td><code>test_no_answer_sources()</code><br><small style="color:var(--muted)">backend/tests/test_no_answer.py</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td><code>build_sources()</code><br><small style="color:var(--muted)">app/services/rag_service.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>Verifies imports, entry points, or version behavior.</td>
+</tr>
+<tr>
+  <td>15</td>
+  <td><code>test_low_relevance_filtering()</code><br><small style="color:var(--muted)">backend/tests/test_no_answer.py</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td><code>format_retrieval_results()</code><br><small style="color:var(--muted)">app/services/retrieval_service.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>Verifies imports, entry points, or version behavior.</td>
+</tr>
+<tr>
+  <td>16</td>
+  <td><code>test_phase5.py</code><br><small style="color:var(--muted)">backend/tests/test_phase5.py</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Module file in backend/tests/test_phase5.py.</td>
+</tr>
+<tr>
+  <td>17</td>
+  <td><code>test_phase5_rag_pipeline()</code><br><small style="color:var(--muted)">backend/tests/test_phase5.py</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td><code>process_query()</code><br><small style="color:var(--muted)">app/services/rag_service.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>Supports retrieval-augmented Q&amp;A or streaming chat.</td>
+</tr>
+<tr>
+  <td>18</td>
+  <td><code>test_prompt_builder.py</code><br><small style="color:var(--muted)">backend/tests/test_prompt_builder.py</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Module file in backend/tests/test_prompt_builder.py.</td>
+</tr>
+<tr>
+  <td>19</td>
+  <td><code>test_rag_prompt()</code><br><small style="color:var(--muted)">backend/tests/test_prompt_builder.py</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td><code>build_rag_prompt()</code><br><small style="color:var(--muted)">app/services/rag_service.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>Builds structured prompts for model calls.</td>
+</tr>
+<tr>
+  <td>20</td>
+  <td><code>test_empty_context()</code><br><small style="color:var(--muted)">backend/tests/test_prompt_builder.py</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td><code>build_rag_prompt()</code><br><small style="color:var(--muted)">app/services/rag_service.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>Verifies imports, entry points, or version behavior.</td>
+</tr>
+<tr>
+  <td>21</td>
+  <td><code>test_empty_query()</code><br><small style="color:var(--muted)">backend/tests/test_prompt_builder.py</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td><code>build_rag_prompt()</code><br><small style="color:var(--muted)">app/services/rag_service.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>Verifies imports, entry points, or version behavior.</td>
+</tr>
+<tr>
+  <td>22</td>
+  <td><code>test_rag_pipeline.py</code><br><small style="color:var(--muted)">backend/tests/test_rag_pipeline.py</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Module file in backend/tests/test_rag_pipeline.py.</td>
+</tr>
+<tr>
+  <td>23</td>
+  <td><code>test_rag_pipeline()</code><br><small style="color:var(--muted)">backend/tests/test_rag_pipeline.py</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td><code>process_query()</code><br><small style="color:var(--muted)">app/services/rag_service.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>Supports retrieval-augmented Q&amp;A or streaming chat.</td>
+</tr>
+<tr>
+  <td>24</td>
+  <td><code>test_rag_service.py</code><br><small style="color:var(--muted)">backend/tests/test_rag_service.py</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Module file in backend/tests/test_rag_service.py.</td>
+</tr>
+<tr>
+  <td>25</td>
+  <td><code>test_process_query()</code><br><small style="color:var(--muted)">backend/tests/test_rag_service.py</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td><code>process_query()</code><br><small style="color:var(--muted)">app/services/rag_service.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>Verifies imports, entry points, or version behavior.</td>
+</tr>
+<tr>
+  <td>26</td>
+  <td><code>test_source_handling.py</code><br><small style="color:var(--muted)">backend/tests/test_source_handling.py</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Module file in backend/tests/test_source_handling.py.</td>
+</tr>
+<tr>
+  <td>27</td>
+  <td><code>test_pdf_sources()</code><br><small style="color:var(--muted)">backend/tests/test_source_handling.py</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td><code>build_sources()</code><br><small style="color:var(--muted)">app/services/rag_service.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>Verifies imports, entry points, or version behavior.</td>
+</tr>
+<tr>
+  <td>28</td>
+  <td><code>test_csv_sources()</code><br><small style="color:var(--muted)">backend/tests/test_source_handling.py</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td><code>build_sources()</code><br><small style="color:var(--muted)">app/services/rag_service.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>Verifies imports, entry points, or version behavior.</td>
+</tr>
+<tr>
+  <td>29</td>
+  <td><code>test_empty_sources()</code><br><small style="color:var(--muted)">backend/tests/test_source_handling.py</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td><code>build_sources()</code><br><small style="color:var(--muted)">app/services/rag_service.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>Verifies imports, entry points, or version behavior.</td>
+</tr>
+<tr>
+  <td>30</td>
+  <td><code>content_service.py</code><br><small style="color:var(--muted)">app/services/content_service.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Module file in app/services/content_service.py.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>app/services/content_service.py</code></td><td>8 nodes</td></tr>
+<tr><td><code>app/services/rag_service.py</code></td><td>8 nodes</td></tr>
+<tr><td><code>app/services/insight_service.py</code></td><td>7 nodes</td></tr>
+<tr><td><code>app/services/retrieval_service.py</code></td><td>5 nodes</td></tr>
+<tr><td><code>app/services/vector_service.py</code></td><td>5 nodes</td></tr>
+<tr><td><code>backend/tests/test_analytics_service.py</code></td><td>4 nodes</td></tr>
+<tr><td><code>backend/tests/test_context_builder.py</code></td><td>4 nodes</td></tr>
+<tr><td><code>backend/tests/test_csv_statistics.py</code></td><td>4 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x82, explains x18, calls x10, inherits x3. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 5. Community 1 ====== -->
+<h2 id="community-1">5. Community 1</h2>
+<p>Community 1 groups implementation around frontend, documents, components, services, mostly in components/documents/DocumentList.tsx, src/pages/Documents.tsx, src/services/documentService.ts. This section covers 31 nodes and 34 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Community 1 (31 nodes, 34 edges)
+    subgraph community_1_components_documents_DocumentCard_ts_085bdee6["components/documents/DocumentCard.tsx"]
+        frontend_src_components_documents_documentcard_t_da632ddc("DocumentCard.tsx")
+        documents_documentcard_documentcard_c5bf150c("DocumentCard()<br/><small>components/documents/DocumentCard.tsx</small>")
+        documents_documentcard_documentcardprops_5fd5dd7b("DocumentCardProps<br/><small>components/documents/DocumentCard.tsx</small>")
+    end
+    subgraph community_1_components_documents_DocumentDetails_db910dba["components/documents/DocumentDetails.tsx"]
+        frontend_src_components_documents_documentdetail_2379865d("DocumentDetails.tsx")
+        documents_documentdetails_documentdetails_ede8cc6c("DocumentDetails()<br/><small>components/documents/DocumentDetails.tsx</small>")
+        documents_documentdetails_documentdetailsprops_cd978b80("DocumentDetailsProps<br/><small>components/documents/DocumentDetails.tsx</small>")
+    end
+    subgraph community_1_src_services_documentService_ts_dc40999b["src/services/documentService.ts"]
+        frontend_src_services_documentservice_ts_07e2696e("documentService.ts")
+        services_documentservice_uploadmultipledocuments_d4f4faf0("uploadMultipleDocuments()<br/><small>src/services/documentService.ts</small>")
+        services_documentservice_multipleuploadresponse_4d6722d4("MultipleUploadResponse<br/><small>src/services/documentService.ts</small>")
+    end
+    subgraph community_1_src_types_document_ts_57d5012a["src/types/document.ts"]
+        frontend_src_types_document_ts_2d65b8f7("document.ts")
+        types_document_activedocument_b35287b4("ActiveDocument<br/><small>src/types/document.ts</small>")
+        types_document_uploadresponse_f8285c44("UploadResponse<br/><small>src/types/document.ts</small>")
+    end
+    subgraph community_1_components_documents_DocumentList_ts_ef1045e9["components/documents/DocumentList.tsx"]
+        frontend_src_components_documents_documentlist_t_d4bb43f6("DocumentList.tsx")
+        documents_documentlist_document_2fd91866("Document<br/><small>components/documents/DocumentList.tsx</small>")
+    end
+    frontend_src_components_documents_uploadstatus_t_d95f0ae8("UploadStatus.tsx")
+    frontend_src_components_documents_uploadzone_tsx_891318d8("UploadZone.tsx")
+    frontend_src_pages_documents_tsx_f2155872("Documents.tsx")
+    frontend_src_services_activedocument_ts_ce536d2e("activeDocument.ts")
+    frontend_src_components_documents_documentcard_t_da632ddc -->|imports| frontend_src_components_documents_documentlist_t_d4bb43f6
+    frontend_src_components_documents_documentdetail_2379865d -->|imports| frontend_src_pages_documents_tsx_f2155872
+    frontend_src_components_documents_documentlist_t_d4bb43f6 -->|imports| frontend_src_pages_documents_tsx_f2155872
+    frontend_src_components_documents_uploadstatus_t_d95f0ae8 -->|imports| frontend_src_pages_documents_tsx_f2155872
+    frontend_src_components_documents_uploadzone_tsx_891318d8 -->|imports| frontend_src_pages_documents_tsx_f2155872
+    frontend_src_pages_documents_tsx_f2155872 -->|imports| frontend_src_services_documentservice_ts_07e2696e
+    frontend_src_pages_documents_tsx_f2155872 -->|imports| services_documentservice_uploadmultipledocuments_d4f4faf0
+    frontend_src_pages_documents_tsx_f2155872 -->|imports| services_documentservice_multipleuploadresponse_4d6722d4
+    frontend_src_services_activedocument_ts_ce536d2e -->|imports| frontend_src_types_document_ts_2d65b8f7
+    frontend_src_services_activedocument_ts_ce536d2e -->|imports| types_document_activedocument_b35287b4
+    frontend_src_services_documentservice_ts_07e2696e -->|imports| frontend_src_types_document_ts_2d65b8f7
+    frontend_src_services_documentservice_ts_07e2696e -->|imports| types_document_uploadresponse_f8285c44
+    %% Omitted for readability: 13 nodes, 0 edges
+    class frontend_src_components_documents_documentcard_t_da632ddc ui;
+    class documents_documentcard_documentcard_c5bf150c ui;
+    class documents_documentcard_documentcardprops_5fd5dd7b ui;
+    class frontend_src_components_documents_documentdetail_2379865d ui;
+    class documents_documentdetails_documentdetails_ede8cc6c ui;
+    class documents_documentdetails_documentdetailsprops_cd978b80 ui;
+    class frontend_src_services_documentservice_ts_07e2696e module;
+    class services_documentservice_uploadmultipledocuments_d4f4faf0 function;
+    class services_documentservice_multipleuploadresponse_4d6722d4 klass;
+    class frontend_src_types_document_ts_2d65b8f7 module;
+    class types_document_activedocument_b35287b4 klass;
+    class types_document_uploadresponse_f8285c44 klass;
+    class frontend_src_components_documents_documentlist_t_d4bb43f6 ui;
+    class documents_documentlist_document_2fd91866 ui;
+    class frontend_src_components_documents_uploadstatus_t_d95f0ae8 ui;
+    class frontend_src_components_documents_uploadzone_tsx_891318d8 ui;
+    class frontend_src_pages_documents_tsx_f2155872 ui;
+    class frontend_src_services_activedocument_ts_ce536d2e module;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>DocumentCard.tsx</code><br><small style="color:var(--muted)">components/documents/DocumentCard.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>DocumentList.tsx</code><br><small style="color:var(--muted)">components/documents/DocumentList.tsx</small></td>
+  <td>Module file in components/documents/DocumentCard.tsx.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>DocumentCardProps</code><br><small style="color:var(--muted)">components/documents/DocumentCard.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>DocumentCardProps node in components/documents/DocumentCard.tsx.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>DocumentCard()</code><br><small style="color:var(--muted)">components/documents/DocumentCard.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>DocumentCard() node in components/documents/DocumentCard.tsx.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>DocumentDetails.tsx</code><br><small style="color:var(--muted)">components/documents/DocumentDetails.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>Documents.tsx</code><br><small style="color:var(--muted)">src/pages/Documents.tsx</small></td>
+  <td>Module file in components/documents/DocumentDetails.tsx.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>DocumentDetailsProps</code><br><small style="color:var(--muted)">components/documents/DocumentDetails.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>DocumentDetailsProps node in components/documents/DocumentDetails.tsx.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>DocumentDetails()</code><br><small style="color:var(--muted)">components/documents/DocumentDetails.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>DocumentDetails() node in components/documents/DocumentDetails.tsx.</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>DocumentList.tsx</code><br><small style="color:var(--muted)">components/documents/DocumentList.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>DocumentCard.tsx</code><br><small style="color:var(--muted)">components/documents/DocumentCard.tsx</small></td>
+  <td><code>Documents.tsx</code><br><small style="color:var(--muted)">src/pages/Documents.tsx</small></td>
+  <td>Module file in components/documents/DocumentList.tsx.</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td><code>Document</code><br><small style="color:var(--muted)">components/documents/DocumentList.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Document node in components/documents/DocumentList.tsx.</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td><code>DocumentListProps</code><br><small style="color:var(--muted)">components/documents/DocumentList.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>DocumentListProps node in components/documents/DocumentList.tsx.</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td><code>DocumentList()</code><br><small style="color:var(--muted)">components/documents/DocumentList.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>DocumentList() node in components/documents/DocumentList.tsx.</td>
+</tr>
+<tr>
+  <td>11</td>
+  <td><code>UploadStatus.tsx</code><br><small style="color:var(--muted)">components/documents/UploadStatus.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>Documents.tsx</code><br><small style="color:var(--muted)">src/pages/Documents.tsx</small></td>
+  <td>Module file in components/documents/UploadStatus.tsx.</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td><code>UploadStatusProps</code><br><small style="color:var(--muted)">components/documents/UploadStatus.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>UploadStatusProps node in components/documents/UploadStatus.tsx.</td>
+</tr>
+<tr>
+  <td>13</td>
+  <td><code>UploadStatus()</code><br><small style="color:var(--muted)">components/documents/UploadStatus.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>UploadStatus() node in components/documents/UploadStatus.tsx.</td>
+</tr>
+<tr>
+  <td>14</td>
+  <td><code>UploadZone.tsx</code><br><small style="color:var(--muted)">components/documents/UploadZone.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>Documents.tsx</code><br><small style="color:var(--muted)">src/pages/Documents.tsx</small></td>
+  <td>Module file in components/documents/UploadZone.tsx.</td>
+</tr>
+<tr>
+  <td>15</td>
+  <td><code>UploadZoneProps</code><br><small style="color:var(--muted)">components/documents/UploadZone.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>UploadZoneProps node in components/documents/UploadZone.tsx.</td>
+</tr>
+<tr>
+  <td>16</td>
+  <td><code>UploadZone()</code><br><small style="color:var(--muted)">components/documents/UploadZone.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>UploadZone() node in components/documents/UploadZone.tsx.</td>
+</tr>
+<tr>
+  <td>17</td>
+  <td><code>Documents.tsx</code><br><small style="color:var(--muted)">src/pages/Documents.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>DocumentDetails.tsx</code><br><small style="color:var(--muted)">components/documents/DocumentDetails.tsx</small><br><code>DocumentList.tsx</code><br><small style="color:var(--muted)">components/documents/DocumentList.tsx</small><br><code>UploadStatus.tsx</code><br><small style="color:var(--muted)">components/documents/UploadStatus.tsx</small><br>+1 more</td>
+  <td><code>documentService.ts</code><br><small style="color:var(--muted)">src/services/documentService.ts</small><br><code>MultipleUploadResponse</code><br><small style="color:var(--muted)">src/services/documentService.ts</small><br><code>uploadMultipleDocuments()</code><br><small style="color:var(--muted)">src/services/documentService.ts</small></td>
+  <td>Module file in src/pages/Documents.tsx.</td>
+</tr>
+<tr>
+  <td>18</td>
+  <td><code>UploadState</code><br><small style="color:var(--muted)">src/pages/Documents.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>UploadState node in src/pages/Documents.tsx.</td>
+</tr>
+<tr>
+  <td>19</td>
+  <td><code>DocumentItem</code><br><small style="color:var(--muted)">src/pages/Documents.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>DocumentItem node in src/pages/Documents.tsx.</td>
+</tr>
+<tr>
+  <td>20</td>
+  <td><code>Documents()</code><br><small style="color:var(--muted)">src/pages/Documents.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documents() node in src/pages/Documents.tsx.</td>
+</tr>
+<tr>
+  <td>21</td>
+  <td><code>activeDocument.ts</code><br><small style="color:var(--muted)">src/services/activeDocument.ts</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>ActiveDocument</code><br><small style="color:var(--muted)">src/types/document.ts</small><br><code>document.ts</code><br><small style="color:var(--muted)">src/types/document.ts</small></td>
+  <td>Module file in src/services/activeDocument.ts.</td>
+</tr>
+<tr>
+  <td>22</td>
+  <td><code>setActiveDocument()</code><br><small style="color:var(--muted)">src/services/activeDocument.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>setActiveDocument() node in src/services/activeDocument.ts.</td>
+</tr>
+<tr>
+  <td>23</td>
+  <td><code>clearActiveDocument()</code><br><small style="color:var(--muted)">src/services/activeDocument.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>clearActiveDocument() node in src/services/activeDocument.ts.</td>
+</tr>
+<tr>
+  <td>24</td>
+  <td><code>documentService.ts</code><br><small style="color:var(--muted)">src/services/documentService.ts</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td><code>Documents.tsx</code><br><small style="color:var(--muted)">src/pages/Documents.tsx</small></td>
+  <td><code>document.ts</code><br><small style="color:var(--muted)">src/types/document.ts</small><br><code>UploadResponse</code><br><small style="color:var(--muted)">src/types/document.ts</small></td>
+  <td>Module file in src/services/documentService.ts.</td>
+</tr>
+<tr>
+  <td>25</td>
+  <td><code>uploadDocument()</code><br><small style="color:var(--muted)">src/services/documentService.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>uploadDocument() node in src/services/documentService.ts.</td>
+</tr>
+<tr>
+  <td>26</td>
+  <td><code>MultipleUploadResponse</code><br><small style="color:var(--muted)">src/services/documentService.ts</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>Documents.tsx</code><br><small style="color:var(--muted)">src/pages/Documents.tsx</small></td>
+  <td>No direct outbound edge</td>
+  <td>MultipleUploadResponse node in src/services/documentService.ts.</td>
+</tr>
+<tr>
+  <td>27</td>
+  <td><code>uploadMultipleDocuments()</code><br><small style="color:var(--muted)">src/services/documentService.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>Documents.tsx</code><br><small style="color:var(--muted)">src/pages/Documents.tsx</small></td>
+  <td>No direct outbound edge</td>
+  <td>uploadMultipleDocuments() node in src/services/documentService.ts.</td>
+</tr>
+<tr>
+  <td>28</td>
+  <td><code>document.ts</code><br><small style="color:var(--muted)">src/types/document.ts</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td><code>activeDocument.ts</code><br><small style="color:var(--muted)">src/services/activeDocument.ts</small><br><code>documentService.ts</code><br><small style="color:var(--muted)">src/services/documentService.ts</small></td>
+  <td>No direct outbound edge</td>
+  <td>Module file in src/types/document.ts.</td>
+</tr>
+<tr>
+  <td>29</td>
+  <td><code>UploadResponse</code><br><small style="color:var(--muted)">src/types/document.ts</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>documentService.ts</code><br><small style="color:var(--muted)">src/services/documentService.ts</small></td>
+  <td>No direct outbound edge</td>
+  <td>UploadResponse node in src/types/document.ts.</td>
+</tr>
+<tr>
+  <td>30</td>
+  <td><code>UploadError</code><br><small style="color:var(--muted)">src/types/document.ts</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>UploadError node in src/types/document.ts.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>components/documents/DocumentList.tsx</code></td><td>4 nodes</td></tr>
+<tr><td><code>src/pages/Documents.tsx</code></td><td>4 nodes</td></tr>
+<tr><td><code>src/services/documentService.ts</code></td><td>4 nodes</td></tr>
+<tr><td><code>src/types/document.ts</code></td><td>4 nodes</td></tr>
+<tr><td><code>components/documents/DocumentCard.tsx</code></td><td>3 nodes</td></tr>
+<tr><td><code>components/documents/DocumentDetails.tsx</code></td><td>3 nodes</td></tr>
+<tr><td><code>components/documents/UploadStatus.tsx</code></td><td>3 nodes</td></tr>
+<tr><td><code>components/documents/UploadZone.tsx</code></td><td>3 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x22, imports x8, imports x4. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 6. Community 4 ====== -->
+<h2 id="community-4">6. Community 4</h2>
+<p>Community 4 groups implementation around frontend, dashboard, components, mockdashboardts, mostly in src/data/mockDashboard.ts, components/dashboard/KeyInsights.tsx, components/dashboard/RecentDocuments.tsx. This section covers 27 nodes and 30 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Community 4 (27 nodes, 30 edges)
+    subgraph community_4_src_data_mockDashboard_ts_50807465["src/data/mockDashboard.ts"]
+        data_mockdashboard_dashboardstats_fc50d44d("dashboardStats<br/><small>src/data/mockDashboard.ts</small>")
+        data_mockdashboard_importantinformation_44a3c6df("importantInformation<br/><small>src/data/mockDashboard.ts</small>")
+        data_mockdashboard_keyinsights_dd4af881("keyInsights<br/><small>src/data/mockDashboard.ts</small>")
+        data_mockdashboard_recentdocuments_4db0acab("recentDocuments<br/><small>src/data/mockDashboard.ts</small>")
+        frontend_src_data_mockdashboard_ts_c1b952a4("mockDashboard.ts")
+    end
+    subgraph community_4_components_dashboard_AnalyticsCard_t_0d402e75["components/dashboard/AnalyticsCard.tsx"]
+        frontend_src_components_dashboard_analyticscard_496480f8("AnalyticsCard.tsx")
+        dashboard_analyticscard_analyticscard_1edcade1("AnalyticsCard()<br/><small>components/dashboard/AnalyticsCard.tsx</small>")
+        dashboard_analyticscard_analyticscardprops_cd660335("AnalyticsCardProps<br/><small>components/dashboard/AnalyticsCard.tsx</small>")
+    end
+    subgraph community_4_components_dashboard_DocumentOvervie_50b70fcf["components/dashboard/DocumentOverview.tsx"]
+        frontend_src_components_dashboard_documentovervi_1a6df429("DocumentOverview.tsx")
+        dashboard_documentoverview_documentoverview_eea01c26("DocumentOverview()<br/><small>components/dashboard/DocumentOverview.tsx</small>")
+        dashboard_documentoverview_documentoverviewprops_075496bf("DocumentOverviewProps<br/><small>components/dashboard/DocumentOverview.tsx</small>")
+    end
+    subgraph community_4_components_dashboard_ImportantInform_39c073eb["components/dashboard/ImportantInformation.tsx"]
+        frontend_src_components_dashboard_importantinfor_9e329358("ImportantInformation.tsx")
+        dashboard_importantinformation_importantinformat_f19daf88("ImportantInformation()<br/><small>components/dashboard/ImportantInformation.tsx</small>")
+        dashboard_importantinformation_importantinformat_d1713955("ImportantInformationProps<br/><small>components/dashboard/ImportantInformation.tsx</small>")
+    end
+    frontend_src_components_dashboard_keyinsights_ts_04ac3bdd("KeyInsights.tsx")
+    frontend_src_components_dashboard_recentdocument_986e5867("RecentDocuments.tsx")
+    frontend_src_components_dashboard_statcard_tsx_aaba8f1f("StatCard.tsx")
+    frontend_src_pages_dashboard_tsx_34bdd18d("Dashboard.tsx")
+    frontend_src_components_dashboard_analyticscard_496480f8 -->|imports| frontend_src_pages_dashboard_tsx_34bdd18d
+    frontend_src_components_dashboard_documentovervi_1a6df429 -->|imports| frontend_src_pages_dashboard_tsx_34bdd18d
+    frontend_src_components_dashboard_importantinfor_9e329358 -->|imports| frontend_src_pages_dashboard_tsx_34bdd18d
+    frontend_src_components_dashboard_keyinsights_ts_04ac3bdd -->|imports| frontend_src_pages_dashboard_tsx_34bdd18d
+    frontend_src_components_dashboard_recentdocument_986e5867 -->|imports| frontend_src_pages_dashboard_tsx_34bdd18d
+    frontend_src_components_dashboard_statcard_tsx_aaba8f1f -->|imports| frontend_src_pages_dashboard_tsx_34bdd18d
+    frontend_src_data_mockdashboard_ts_c1b952a4 -->|imports| frontend_src_pages_dashboard_tsx_34bdd18d
+    data_mockdashboard_dashboardstats_fc50d44d -->|imports| frontend_src_pages_dashboard_tsx_34bdd18d
+    data_mockdashboard_recentdocuments_4db0acab -->|imports| frontend_src_pages_dashboard_tsx_34bdd18d
+    data_mockdashboard_importantinformation_44a3c6df -->|imports| frontend_src_pages_dashboard_tsx_34bdd18d
+    data_mockdashboard_keyinsights_dd4af881 -->|imports| frontend_src_pages_dashboard_tsx_34bdd18d
+    %% Omitted for readability: 9 nodes, 0 edges
+    class data_mockdashboard_dashboardstats_fc50d44d function;
+    class data_mockdashboard_importantinformation_44a3c6df function;
+    class data_mockdashboard_keyinsights_dd4af881 function;
+    class data_mockdashboard_recentdocuments_4db0acab function;
+    class frontend_src_data_mockdashboard_ts_c1b952a4 module;
+    class frontend_src_components_dashboard_analyticscard_496480f8 ui;
+    class dashboard_analyticscard_analyticscard_1edcade1 ui;
+    class dashboard_analyticscard_analyticscardprops_cd660335 ui;
+    class frontend_src_components_dashboard_documentovervi_1a6df429 ui;
+    class dashboard_documentoverview_documentoverview_eea01c26 ui;
+    class dashboard_documentoverview_documentoverviewprops_075496bf ui;
+    class frontend_src_components_dashboard_importantinfor_9e329358 ui;
+    class dashboard_importantinformation_importantinformat_f19daf88 ui;
+    class dashboard_importantinformation_importantinformat_d1713955 ui;
+    class frontend_src_components_dashboard_keyinsights_ts_04ac3bdd ui;
+    class frontend_src_components_dashboard_recentdocument_986e5867 ui;
+    class frontend_src_components_dashboard_statcard_tsx_aaba8f1f ui;
+    class frontend_src_pages_dashboard_tsx_34bdd18d ui;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>AnalyticsCard.tsx</code><br><small style="color:var(--muted)">components/dashboard/AnalyticsCard.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>Dashboard.tsx</code><br><small style="color:var(--muted)">src/pages/Dashboard.tsx</small></td>
+  <td>Module file in components/dashboard/AnalyticsCard.tsx.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>AnalyticsCardProps</code><br><small style="color:var(--muted)">components/dashboard/AnalyticsCard.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Orchestrates analysis and returns structured documentation data.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>AnalyticsCard()</code><br><small style="color:var(--muted)">components/dashboard/AnalyticsCard.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Orchestrates analysis and returns structured documentation data.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>DocumentOverview.tsx</code><br><small style="color:var(--muted)">components/dashboard/DocumentOverview.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>Dashboard.tsx</code><br><small style="color:var(--muted)">src/pages/Dashboard.tsx</small></td>
+  <td>Module file in components/dashboard/DocumentOverview.tsx.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>DocumentOverviewProps</code><br><small style="color:var(--muted)">components/dashboard/DocumentOverview.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>DocumentOverviewProps node in components/dashboard/DocumentOverview.tsx.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>DocumentOverview()</code><br><small style="color:var(--muted)">components/dashboard/DocumentOverview.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>DocumentOverview() node in components/dashboard/DocumentOverview.tsx.</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>ImportantInformation.tsx</code><br><small style="color:var(--muted)">components/dashboard/ImportantInformation.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>Dashboard.tsx</code><br><small style="color:var(--muted)">src/pages/Dashboard.tsx</small></td>
+  <td>Module file in components/dashboard/ImportantInformation.tsx.</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td><code>ImportantInformationProps</code><br><small style="color:var(--muted)">components/dashboard/ImportantInformation.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>ImportantInformationProps node in components/dashboard/ImportantInformation.tsx.</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td><code>ImportantInformation()</code><br><small style="color:var(--muted)">components/dashboard/ImportantInformation.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>ImportantInformation() node in components/dashboard/ImportantInformation.tsx.</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td><code>KeyInsights.tsx</code><br><small style="color:var(--muted)">components/dashboard/KeyInsights.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>Dashboard.tsx</code><br><small style="color:var(--muted)">src/pages/Dashboard.tsx</small></td>
+  <td>Module file in components/dashboard/KeyInsights.tsx.</td>
+</tr>
+<tr>
+  <td>11</td>
+  <td><code>Insight</code><br><small style="color:var(--muted)">components/dashboard/KeyInsights.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Insight node in components/dashboard/KeyInsights.tsx.</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td><code>KeyInsightsProps</code><br><small style="color:var(--muted)">components/dashboard/KeyInsights.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>KeyInsightsProps node in components/dashboard/KeyInsights.tsx.</td>
+</tr>
+<tr>
+  <td>13</td>
+  <td><code>KeyInsights()</code><br><small style="color:var(--muted)">components/dashboard/KeyInsights.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>KeyInsights() node in components/dashboard/KeyInsights.tsx.</td>
+</tr>
+<tr>
+  <td>14</td>
+  <td><code>RecentDocuments.tsx</code><br><small style="color:var(--muted)">components/dashboard/RecentDocuments.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>Dashboard.tsx</code><br><small style="color:var(--muted)">src/pages/Dashboard.tsx</small></td>
+  <td>Module file in components/dashboard/RecentDocuments.tsx.</td>
+</tr>
+<tr>
+  <td>15</td>
+  <td><code>Document</code><br><small style="color:var(--muted)">components/dashboard/RecentDocuments.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Document node in components/dashboard/RecentDocuments.tsx.</td>
+</tr>
+<tr>
+  <td>16</td>
+  <td><code>RecentDocumentsProps</code><br><small style="color:var(--muted)">components/dashboard/RecentDocuments.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>RecentDocumentsProps node in components/dashboard/RecentDocuments.tsx.</td>
+</tr>
+<tr>
+  <td>17</td>
+  <td><code>RecentDocuments()</code><br><small style="color:var(--muted)">components/dashboard/RecentDocuments.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>RecentDocuments() node in components/dashboard/RecentDocuments.tsx.</td>
+</tr>
+<tr>
+  <td>18</td>
+  <td><code>StatCard.tsx</code><br><small style="color:var(--muted)">components/dashboard/StatCard.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>Dashboard.tsx</code><br><small style="color:var(--muted)">src/pages/Dashboard.tsx</small></td>
+  <td>Module file in components/dashboard/StatCard.tsx.</td>
+</tr>
+<tr>
+  <td>19</td>
+  <td><code>StatCardProps</code><br><small style="color:var(--muted)">components/dashboard/StatCard.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>StatCardProps node in components/dashboard/StatCard.tsx.</td>
+</tr>
+<tr>
+  <td>20</td>
+  <td><code>StatCard()</code><br><small style="color:var(--muted)">components/dashboard/StatCard.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>StatCard() node in components/dashboard/StatCard.tsx.</td>
+</tr>
+<tr>
+  <td>21</td>
+  <td><code>mockDashboard.ts</code><br><small style="color:var(--muted)">src/data/mockDashboard.ts</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>Dashboard.tsx</code><br><small style="color:var(--muted)">src/pages/Dashboard.tsx</small></td>
+  <td>Module file in src/data/mockDashboard.ts.</td>
+</tr>
+<tr>
+  <td>22</td>
+  <td><code>dashboardStats</code><br><small style="color:var(--muted)">src/data/mockDashboard.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>Dashboard.tsx</code><br><small style="color:var(--muted)">src/pages/Dashboard.tsx</small></td>
+  <td>dashboardStats node in src/data/mockDashboard.ts.</td>
+</tr>
+<tr>
+  <td>23</td>
+  <td><code>recentDocuments</code><br><small style="color:var(--muted)">src/data/mockDashboard.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>Dashboard.tsx</code><br><small style="color:var(--muted)">src/pages/Dashboard.tsx</small></td>
+  <td>recentDocuments node in src/data/mockDashboard.ts.</td>
+</tr>
+<tr>
+  <td>24</td>
+  <td><code>importantInformation</code><br><small style="color:var(--muted)">src/data/mockDashboard.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>Dashboard.tsx</code><br><small style="color:var(--muted)">src/pages/Dashboard.tsx</small></td>
+  <td>importantInformation node in src/data/mockDashboard.ts.</td>
+</tr>
+<tr>
+  <td>25</td>
+  <td><code>keyInsights</code><br><small style="color:var(--muted)">src/data/mockDashboard.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>Dashboard.tsx</code><br><small style="color:var(--muted)">src/pages/Dashboard.tsx</small></td>
+  <td>keyInsights node in src/data/mockDashboard.ts.</td>
+</tr>
+<tr>
+  <td>26</td>
+  <td><code>Dashboard.tsx</code><br><small style="color:var(--muted)">src/pages/Dashboard.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>AnalyticsCard.tsx</code><br><small style="color:var(--muted)">components/dashboard/AnalyticsCard.tsx</small><br><code>dashboardStats</code><br><small style="color:var(--muted)">src/data/mockDashboard.ts</small><br><code>DocumentOverview.tsx</code><br><small style="color:var(--muted)">components/dashboard/DocumentOverview.tsx</small><br>+8 more</td>
+  <td>No direct outbound edge</td>
+  <td>Module file in src/pages/Dashboard.tsx.</td>
+</tr>
+<tr>
+  <td>27</td>
+  <td><code>Dashboard()</code><br><small style="color:var(--muted)">src/pages/Dashboard.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Dashboard() node in src/pages/Dashboard.tsx.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>src/data/mockDashboard.ts</code></td><td>5 nodes</td></tr>
+<tr><td><code>components/dashboard/KeyInsights.tsx</code></td><td>4 nodes</td></tr>
+<tr><td><code>components/dashboard/RecentDocuments.tsx</code></td><td>4 nodes</td></tr>
+<tr><td><code>components/dashboard/AnalyticsCard.tsx</code></td><td>3 nodes</td></tr>
+<tr><td><code>components/dashboard/DocumentOverview.tsx</code></td><td>3 nodes</td></tr>
+<tr><td><code>components/dashboard/ImportantInformation.tsx</code></td><td>3 nodes</td></tr>
+<tr><td><code>components/dashboard/StatCard.tsx</code></td><td>3 nodes</td></tr>
+<tr><td><code>src/pages/Dashboard.tsx</code></td><td>2 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x19, imports x7, imports x4. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 7. Community 6 ====== -->
+<h2 id="community-6">7. Community 6</h2>
+<p>Community 6 groups implementation around readmemd, phase, project, document, mostly in README.md. This section covers 22 nodes and 21 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Community 6 (22 nodes, 21 edges)
+    project_starq_readme_current_development_status_6c37ebff("Current Development Status<br/><small>README.md</small>")
+    project_starq_readme_starq_62668c81("StarQ<br/><small>README.md</small>")
+    project_starq_readme_tech_stack_8df87ff1("Tech Stack<br/><small>README.md</small>")
+    readme_md_eeb98ce0("README.md")
+    project_starq_readme_project_architecture_f214e3de("Project Architecture<br/><small>README.md</small>")
+    project_starq_readme_project_structure_a662c1fe("Project Structure<br/><small>README.md</small>")
+    project_starq_readme_backend_e7fd8c61("Backend<br/><small>README.md</small>")
+    project_starq_readme_document_processing_b872a181("Document Processing<br/><small>README.md</small>")
+    project_starq_readme_frontend_a22d5e12("Frontend<br/><small>README.md</small>")
+    project_starq_readme_key_features_c16627dc("Key Features<br/><small>README.md</small>")
+    project_starq_readme_phase_1_project_setup_bbd5bf2b("Phase 1 — Project Setup<br/><small>README.md</small>")
+    project_starq_readme_phase_2_document_ingestion_e8649d3d("Phase 2 — Document Ingestion &amp; Validation<br/><small>README.md</small>")
+    project_starq_readme_phase_3_text_processing_rag_ea88e33a("Phase 3 — Text Processing &amp; RAG Prepara...<br/><small>README.md</small>")
+    project_starq_readme_phase_4_embedding_generatio_534ad7e2("Phase 4 — Embedding Generation &amp; Vector...<br/><small>README.md</small>")
+    project_starq_readme_phase_5_multi_document_know_7bade18b("Phase 5 — Multi-Document Knowledge Coll...<br/><small>README.md</small>")
+    project_starq_readme_phase_6_intelligent_dashboa_06314b07("Phase 6 — Intelligent Dashboard<br/><small>README.md</small>")
+    project_starq_readme_phase_7_frontend_a0cd1e16("Phase 7 — Frontend<br/><small>README.md</small>")
+    project_starq_readme_phase_8_testing_optimizatio_00236984("Phase 8 — Testing &amp; Optimization<br/><small>README.md</small>")
+    readme_md_eeb98ce0 -->|contains| project_starq_readme_starq_62668c81
+    project_starq_readme_starq_62668c81 -->|contains| project_starq_readme_key_features_c16627dc
+    project_starq_readme_starq_62668c81 -->|contains| project_starq_readme_project_architecture_f214e3de
+    project_starq_readme_starq_62668c81 -->|contains| project_starq_readme_tech_stack_8df87ff1
+    project_starq_readme_starq_62668c81 -->|contains| project_starq_readme_project_structure_a662c1fe
+    project_starq_readme_starq_62668c81 -->|contains| project_starq_readme_current_development_status_6c37ebff
+    project_starq_readme_tech_stack_8df87ff1 -->|contains| project_starq_readme_backend_e7fd8c61
+    project_starq_readme_tech_stack_8df87ff1 -->|contains| project_starq_readme_document_processing_b872a181
+    project_starq_readme_tech_stack_8df87ff1 -->|contains| project_starq_readme_frontend_a22d5e12
+    project_starq_readme_current_development_status_6c37ebff -->|contains| project_starq_readme_phase_1_project_setup_bbd5bf2b
+    project_starq_readme_current_development_status_6c37ebff -->|contains| project_starq_readme_phase_2_document_ingestion_e8649d3d
+    project_starq_readme_current_development_status_6c37ebff -->|contains| project_starq_readme_phase_3_text_processing_rag_ea88e33a
+    project_starq_readme_current_development_status_6c37ebff -->|contains| project_starq_readme_phase_4_embedding_generatio_534ad7e2
+    project_starq_readme_current_development_status_6c37ebff -->|contains| project_starq_readme_phase_5_multi_document_know_7bade18b
+    project_starq_readme_current_development_status_6c37ebff -->|contains| project_starq_readme_phase_6_intelligent_dashboa_06314b07
+    project_starq_readme_current_development_status_6c37ebff -->|contains| project_starq_readme_phase_7_frontend_a0cd1e16
+    project_starq_readme_current_development_status_6c37ebff -->|contains| project_starq_readme_phase_8_testing_optimizatio_00236984
+    %% Omitted for readability: 4 nodes, 0 edges
+    class project_starq_readme_current_development_status_6c37ebff concept;
+    class project_starq_readme_starq_62668c81 concept;
+    class project_starq_readme_tech_stack_8df87ff1 concept;
+    class readme_md_eeb98ce0 concept;
+    class project_starq_readme_project_architecture_f214e3de concept;
+    class project_starq_readme_project_structure_a662c1fe concept;
+    class project_starq_readme_backend_e7fd8c61 concept;
+    class project_starq_readme_document_processing_b872a181 concept;
+    class project_starq_readme_frontend_a22d5e12 concept;
+    class project_starq_readme_key_features_c16627dc concept;
+    class project_starq_readme_phase_1_project_setup_bbd5bf2b concept;
+    class project_starq_readme_phase_2_document_ingestion_e8649d3d concept;
+    class project_starq_readme_phase_3_text_processing_rag_ea88e33a concept;
+    class project_starq_readme_phase_4_embedding_generatio_534ad7e2 concept;
+    class project_starq_readme_phase_5_multi_document_know_7bade18b concept;
+    class project_starq_readme_phase_6_intelligent_dashboa_06314b07 concept;
+    class project_starq_readme_phase_7_frontend_a0cd1e16 concept;
+    class project_starq_readme_phase_8_testing_optimizatio_00236984 concept;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>README.md</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing README.md.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>StarQ</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing StarQ.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>Key Features</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Key Features.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>Project Architecture</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Project Architecture.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>code:text (┌──────────────────┐)</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing code:text (┌──────────────────┐).</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>Tech Stack</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Tech Stack.</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>Backend</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Backend.</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td><code>Document Processing</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Document Processing.</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td><code>RAG Pipeline</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing RAG Pipeline.</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td><code>Frontend</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Frontend.</td>
+</tr>
+<tr>
+  <td>11</td>
+  <td><code>Project Structure</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Project Structure.</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td><code>code:text (starq/)</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing code:text (starq/).</td>
+</tr>
+<tr>
+  <td>13</td>
+  <td><code>Current Development Status</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Current Development Status.</td>
+</tr>
+<tr>
+  <td>14</td>
+  <td><code>Phase 1 — Project Setup</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Phase 1 — Project Setup.</td>
+</tr>
+<tr>
+  <td>15</td>
+  <td><code>Phase 2 — Document Ingestion &amp; Validation</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Phase 2 — Document Ingestion &amp; Validation.</td>
+</tr>
+<tr>
+  <td>16</td>
+  <td><code>Phase 3 — Text Processing &amp; RAG Preparation</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Phase 3 — Text Processing &amp; RAG Preparation.</td>
+</tr>
+<tr>
+  <td>17</td>
+  <td><code>Phase 4 — Embedding Generation &amp; Vector Storage</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Phase 4 — Embedding Generation &amp; Vector Storage.</td>
+</tr>
+<tr>
+  <td>18</td>
+  <td><code>Phase 5 — Multi-Document Knowledge Collections</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Phase 5 — Multi-Document Knowledge Collections.</td>
+</tr>
+<tr>
+  <td>19</td>
+  <td><code>Phase 6 — Intelligent Dashboard</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Phase 6 — Intelligent Dashboard.</td>
+</tr>
+<tr>
+  <td>20</td>
+  <td><code>Phase 7 — Frontend</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Phase 7 — Frontend.</td>
+</tr>
+<tr>
+  <td>21</td>
+  <td><code>Phase 8 — Testing &amp; Optimization</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Phase 8 — Testing &amp; Optimization.</td>
+</tr>
+<tr>
+  <td>22</td>
+  <td><code>Phase 9 — Deployment</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Phase 9 — Deployment.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>README.md</code></td><td>22 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x21. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 8. Community 7 ====== -->
+<h2 id="community-7">8. Community 7</h2>
+<p>Community 7 groups implementation around frontend, chat, components, chatts, mostly in src/types/chat.ts, components/chat/ChatHeader.tsx, components/chat/ChatInput.tsx. This section covers 21 nodes and 29 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Community 7 (21 nodes, 29 edges)
+    subgraph community_7_components_chat_ChatHeader_tsx_ea518e8d["components/chat/ChatHeader.tsx"]
+        frontend_src_components_chat_chatheader_tsx_08779b52("ChatHeader.tsx")
+        chat_chatheader_chatheader_5096cba2("ChatHeader()<br/><small>components/chat/ChatHeader.tsx</small>")
+        chat_chatheader_chatheaderprops_4b494196("ChatHeaderProps<br/><small>components/chat/ChatHeader.tsx</small>")
+    end
+    subgraph community_7_components_chat_ChatInput_tsx_95c9b1d8["components/chat/ChatInput.tsx"]
+        frontend_src_components_chat_chatinput_tsx_3cead3c5("ChatInput.tsx")
+        chat_chatinput_chatinput_70b77136("ChatInput()<br/><small>components/chat/ChatInput.tsx</small>")
+        chat_chatinput_chatinputprops_c4433b3c("ChatInputProps<br/><small>components/chat/ChatInput.tsx</small>")
+    end
+    subgraph community_7_components_chat_ChatMessages_tsx_c17589cc["components/chat/ChatMessages.tsx"]
+        frontend_src_components_chat_chatmessages_tsx_727801bf("ChatMessages.tsx")
+        chat_chatmessages_chatmessages_2e53ead6("ChatMessages()<br/><small>components/chat/ChatMessages.tsx</small>")
+        chat_chatmessages_chatmessagesprops_ab544a51("ChatMessagesProps<br/><small>components/chat/ChatMessages.tsx</small>")
+    end
+    subgraph community_7_src_types_chat_ts_a079c3b8["src/types/chat.ts"]
+        frontend_src_types_chat_ts_f7c46659("chat.ts")
+        types_chat_chatmessage_d39ae747("ChatMessage<br/><small>src/types/chat.ts</small>")
+        types_chat_queryresponse_a1fecf21("QueryResponse<br/><small>src/types/chat.ts</small>")
+    end
+    subgraph community_7_src_pages_Chat_tsx_d24c5322["src/pages/Chat.tsx"]
+        frontend_src_pages_chat_tsx_d2b16201("Chat.tsx")
+        pages_chat_chat_a4f2abe2("Chat()<br/><small>src/pages/Chat.tsx</small>")
+    end
+    subgraph community_7_src_services_queryService_ts_4b214cc2["src/services/queryService.ts"]
+        frontend_src_services_queryservice_ts_0d7e6f47("queryService.ts")
+        services_queryservice_sendquery_cd36648c("sendQuery()<br/><small>src/services/queryService.ts</small>")
+    end
+    frontend_src_components_chat_messagebubble_tsx_4d9fb977("MessageBubble.tsx")
+    services_activedocument_getactivedocument_ab6dc9fe("getActiveDocument()<br/><small>src/services/activeDocument.ts</small>")
+    pages_chat_chat_a4f2abe2 -->|calls| services_activedocument_getactivedocument_ab6dc9fe
+    frontend_src_components_chat_chatheader_tsx_08779b52 -->|imports| frontend_src_pages_chat_tsx_d2b16201
+    frontend_src_components_chat_chatinput_tsx_3cead3c5 -->|imports| frontend_src_pages_chat_tsx_d2b16201
+    frontend_src_components_chat_chatmessages_tsx_727801bf -->|imports| frontend_src_types_chat_ts_f7c46659
+    frontend_src_components_chat_chatmessages_tsx_727801bf -->|imports| types_chat_chatmessage_d39ae747
+    frontend_src_components_chat_chatmessages_tsx_727801bf -->|imports| frontend_src_components_chat_messagebubble_tsx_4d9fb977
+    frontend_src_components_chat_chatmessages_tsx_727801bf -->|imports| frontend_src_pages_chat_tsx_d2b16201
+    frontend_src_components_chat_messagebubble_tsx_4d9fb977 -->|imports| frontend_src_types_chat_ts_f7c46659
+    frontend_src_components_chat_messagebubble_tsx_4d9fb977 -->|imports| types_chat_chatmessage_d39ae747
+    frontend_src_pages_chat_tsx_d2b16201 -->|imports| frontend_src_services_queryservice_ts_0d7e6f47
+    frontend_src_pages_chat_tsx_d2b16201 -->|imports| services_queryservice_sendquery_cd36648c
+    frontend_src_pages_chat_tsx_d2b16201 -->|imports| services_activedocument_getactivedocument_ab6dc9fe
+    frontend_src_pages_chat_tsx_d2b16201 -->|imports| frontend_src_types_chat_ts_f7c46659
+    frontend_src_pages_chat_tsx_d2b16201 -->|imports| types_chat_chatmessage_d39ae747
+    frontend_src_services_queryservice_ts_0d7e6f47 -->|imports| frontend_src_types_chat_ts_f7c46659
+    frontend_src_services_queryservice_ts_0d7e6f47 -->|imports| types_chat_queryresponse_a1fecf21
+    %% Omitted for readability: 3 nodes, 0 edges
+    class frontend_src_components_chat_chatheader_tsx_08779b52 ui;
+    class chat_chatheader_chatheader_5096cba2 ui;
+    class chat_chatheader_chatheaderprops_4b494196 ui;
+    class frontend_src_components_chat_chatinput_tsx_3cead3c5 ui;
+    class chat_chatinput_chatinput_70b77136 ui;
+    class chat_chatinput_chatinputprops_c4433b3c ui;
+    class frontend_src_components_chat_chatmessages_tsx_727801bf ui;
+    class chat_chatmessages_chatmessages_2e53ead6 ui;
+    class chat_chatmessages_chatmessagesprops_ab544a51 ui;
+    class frontend_src_types_chat_ts_f7c46659 module;
+    class types_chat_chatmessage_d39ae747 klass;
+    class types_chat_queryresponse_a1fecf21 klass;
+    class frontend_src_pages_chat_tsx_d2b16201 ui;
+    class pages_chat_chat_a4f2abe2 ui;
+    class frontend_src_services_queryservice_ts_0d7e6f47 module;
+    class services_queryservice_sendquery_cd36648c function;
+    class frontend_src_components_chat_messagebubble_tsx_4d9fb977 ui;
+    class services_activedocument_getactivedocument_ab6dc9fe function;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>ChatHeader.tsx</code><br><small style="color:var(--muted)">components/chat/ChatHeader.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>Chat.tsx</code><br><small style="color:var(--muted)">src/pages/Chat.tsx</small></td>
+  <td>Module file in components/chat/ChatHeader.tsx.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>ChatHeaderProps</code><br><small style="color:var(--muted)">components/chat/ChatHeader.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Supports retrieval-augmented Q&amp;A or streaming chat.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>ChatHeader()</code><br><small style="color:var(--muted)">components/chat/ChatHeader.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Supports retrieval-augmented Q&amp;A or streaming chat.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>ChatInput.tsx</code><br><small style="color:var(--muted)">components/chat/ChatInput.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>Chat.tsx</code><br><small style="color:var(--muted)">src/pages/Chat.tsx</small></td>
+  <td>Module file in components/chat/ChatInput.tsx.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>ChatInputProps</code><br><small style="color:var(--muted)">components/chat/ChatInput.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Supports retrieval-augmented Q&amp;A or streaming chat.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>ChatInput()</code><br><small style="color:var(--muted)">components/chat/ChatInput.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Supports retrieval-augmented Q&amp;A or streaming chat.</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>ChatMessages.tsx</code><br><small style="color:var(--muted)">components/chat/ChatMessages.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>chat.ts</code><br><small style="color:var(--muted)">src/types/chat.ts</small><br><code>Chat.tsx</code><br><small style="color:var(--muted)">src/pages/Chat.tsx</small><br><code>ChatMessage</code><br><small style="color:var(--muted)">src/types/chat.ts</small><br>+1 more</td>
+  <td>Module file in components/chat/ChatMessages.tsx.</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td><code>ChatMessagesProps</code><br><small style="color:var(--muted)">components/chat/ChatMessages.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Supports retrieval-augmented Q&amp;A or streaming chat.</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td><code>ChatMessages()</code><br><small style="color:var(--muted)">components/chat/ChatMessages.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Supports retrieval-augmented Q&amp;A or streaming chat.</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td><code>MessageBubble.tsx</code><br><small style="color:var(--muted)">components/chat/MessageBubble.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>ChatMessages.tsx</code><br><small style="color:var(--muted)">components/chat/ChatMessages.tsx</small></td>
+  <td><code>chat.ts</code><br><small style="color:var(--muted)">src/types/chat.ts</small><br><code>ChatMessage</code><br><small style="color:var(--muted)">src/types/chat.ts</small></td>
+  <td>Module file in components/chat/MessageBubble.tsx.</td>
+</tr>
+<tr>
+  <td>11</td>
+  <td><code>MessageBubbleProps</code><br><small style="color:var(--muted)">components/chat/MessageBubble.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>MessageBubbleProps node in components/chat/MessageBubble.tsx.</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td><code>MessageBubble()</code><br><small style="color:var(--muted)">components/chat/MessageBubble.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>MessageBubble() node in components/chat/MessageBubble.tsx.</td>
+</tr>
+<tr>
+  <td>13</td>
+  <td><code>Chat.tsx</code><br><small style="color:var(--muted)">src/pages/Chat.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>ChatHeader.tsx</code><br><small style="color:var(--muted)">components/chat/ChatHeader.tsx</small><br><code>ChatInput.tsx</code><br><small style="color:var(--muted)">components/chat/ChatInput.tsx</small><br><code>ChatMessages.tsx</code><br><small style="color:var(--muted)">components/chat/ChatMessages.tsx</small></td>
+  <td><code>chat.ts</code><br><small style="color:var(--muted)">src/types/chat.ts</small><br><code>ChatMessage</code><br><small style="color:var(--muted)">src/types/chat.ts</small><br><code>getActiveDocument()</code><br><small style="color:var(--muted)">src/services/activeDocument.ts</small><br>+2 more</td>
+  <td>Module file in src/pages/Chat.tsx.</td>
+</tr>
+<tr>
+  <td>14</td>
+  <td><code>Chat()</code><br><small style="color:var(--muted)">src/pages/Chat.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>getActiveDocument()</code><br><small style="color:var(--muted)">src/services/activeDocument.ts</small></td>
+  <td>Supports retrieval-augmented Q&amp;A or streaming chat.</td>
+</tr>
+<tr>
+  <td>15</td>
+  <td><code>getActiveDocument()</code><br><small style="color:var(--muted)">src/services/activeDocument.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>Chat()</code><br><small style="color:var(--muted)">src/pages/Chat.tsx</small><br><code>Chat.tsx</code><br><small style="color:var(--muted)">src/pages/Chat.tsx</small></td>
+  <td>No direct outbound edge</td>
+  <td>getActiveDocument() node in src/services/activeDocument.ts.</td>
+</tr>
+<tr>
+  <td>16</td>
+  <td><code>queryService.ts</code><br><small style="color:var(--muted)">src/services/queryService.ts</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td><code>Chat.tsx</code><br><small style="color:var(--muted)">src/pages/Chat.tsx</small></td>
+  <td><code>chat.ts</code><br><small style="color:var(--muted)">src/types/chat.ts</small><br><code>QueryResponse</code><br><small style="color:var(--muted)">src/types/chat.ts</small></td>
+  <td>Module file in src/services/queryService.ts.</td>
+</tr>
+<tr>
+  <td>17</td>
+  <td><code>sendQuery()</code><br><small style="color:var(--muted)">src/services/queryService.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>Chat.tsx</code><br><small style="color:var(--muted)">src/pages/Chat.tsx</small></td>
+  <td>No direct outbound edge</td>
+  <td>sendQuery() node in src/services/queryService.ts.</td>
+</tr>
+<tr>
+  <td>18</td>
+  <td><code>chat.ts</code><br><small style="color:var(--muted)">src/types/chat.ts</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td><code>Chat.tsx</code><br><small style="color:var(--muted)">src/pages/Chat.tsx</small><br><code>ChatMessages.tsx</code><br><small style="color:var(--muted)">components/chat/ChatMessages.tsx</small><br><code>MessageBubble.tsx</code><br><small style="color:var(--muted)">components/chat/MessageBubble.tsx</small><br>+1 more</td>
+  <td>No direct outbound edge</td>
+  <td>Module file in src/types/chat.ts.</td>
+</tr>
+<tr>
+  <td>19</td>
+  <td><code>Source</code><br><small style="color:var(--muted)">src/types/chat.ts</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Source node in src/types/chat.ts.</td>
+</tr>
+<tr>
+  <td>20</td>
+  <td><code>QueryResponse</code><br><small style="color:var(--muted)">src/types/chat.ts</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>queryService.ts</code><br><small style="color:var(--muted)">src/services/queryService.ts</small></td>
+  <td>No direct outbound edge</td>
+  <td>QueryResponse node in src/types/chat.ts.</td>
+</tr>
+<tr>
+  <td>21</td>
+  <td><code>ChatMessage</code><br><small style="color:var(--muted)">src/types/chat.ts</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>Chat.tsx</code><br><small style="color:var(--muted)">src/pages/Chat.tsx</small><br><code>ChatMessages.tsx</code><br><small style="color:var(--muted)">components/chat/ChatMessages.tsx</small><br><code>MessageBubble.tsx</code><br><small style="color:var(--muted)">components/chat/MessageBubble.tsx</small></td>
+  <td>No direct outbound edge</td>
+  <td>Supports retrieval-augmented Q&amp;A or streaming chat.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>src/types/chat.ts</code></td><td>4 nodes</td></tr>
+<tr><td><code>components/chat/ChatHeader.tsx</code></td><td>3 nodes</td></tr>
+<tr><td><code>components/chat/ChatInput.tsx</code></td><td>3 nodes</td></tr>
+<tr><td><code>components/chat/ChatMessages.tsx</code></td><td>3 nodes</td></tr>
+<tr><td><code>components/chat/MessageBubble.tsx</code></td><td>3 nodes</td></tr>
+<tr><td><code>src/pages/Chat.tsx</code></td><td>2 nodes</td></tr>
+<tr><td><code>src/services/queryService.ts</code></td><td>2 nodes</td></tr>
+<tr><td><code>src/services/activeDocument.ts</code></td><td>1 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x13, imports x9, imports x6, calls x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 9. Community 19 ====== -->
+<h2 id="community-19">9. Community 19</h2>
+<p>Community 19 groups implementation around backend, app, mostly in backend/app/__init__.py. This section covers 1 nodes and 0 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Community 19 (1 nodes, 0 edges)
+    backend_app_init_py_b59ab149("__init__.py")
+    class backend_app_init_py_b59ab149 module;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>__init__.py</code><br><small style="color:var(--muted)">backend/app/__init__.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Module file in backend/app/__init__.py.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>backend/app/__init__.py</code></td><td>1 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: No high-confidence call edges detected. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 10. Community 20 ====== -->
+<h2 id="community-20">10. Community 20</h2>
+<p>Community 20 groups implementation around backend, app, api, mostly in app/api/__init__.py. This section covers 1 nodes and 0 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Community 20 (1 nodes, 0 edges)
+    backend_app_api_init_py_bced5e3a("__init__.py")
+    class backend_app_api_init_py_bced5e3a module;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>__init__.py</code><br><small style="color:var(--muted)">app/api/__init__.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Module file in app/api/__init__.py.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>app/api/__init__.py</code></td><td>1 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: No high-confidence call edges detected. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 11. Community 21 ====== -->
+<h2 id="community-21">11. Community 21</h2>
+<p>Community 21 groups implementation around backend, app, api, routes, mostly in api/routes/__init__.py. This section covers 1 nodes and 0 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Community 21 (1 nodes, 0 edges)
+    backend_app_api_routes_init_py_2d994ac6("__init__.py")
+    class backend_app_api_routes_init_py_2d994ac6 module;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>__init__.py</code><br><small style="color:var(--muted)">api/routes/__init__.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Module file in api/routes/__init__.py.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>api/routes/__init__.py</code></td><td>1 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: No high-confidence call edges detected. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 12. Community 22 ====== -->
+<h2 id="community-22">12. Community 22</h2>
+<p>Community 22 groups implementation around configpy, backend, app, mostly in app/core/config.py. This section covers 1 nodes and 0 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Community 22 (1 nodes, 0 edges)
+    backend_app_core_config_py_8595cd5a("config.py")
+    class backend_app_core_config_py_8595cd5a module;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>config.py</code><br><small style="color:var(--muted)">app/core/config.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Module file in app/core/config.py.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>app/core/config.py</code></td><td>1 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: No high-confidence call edges detected. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 13. Community 23 ====== -->
+<h2 id="community-23">13. Community 23</h2>
+<p>Community 23 groups implementation around backend, app, mostly in app/core/__init__.py. This section covers 1 nodes and 0 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Community 23 (1 nodes, 0 edges)
+    backend_app_core_init_py_a1c175ee("__init__.py")
+    class backend_app_core_init_py_a1c175ee module;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>__init__.py</code><br><small style="color:var(--muted)">app/core/__init__.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Module file in app/core/__init__.py.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>app/core/__init__.py</code></td><td>1 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: No high-confidence call edges detected. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 14. Community 24 ====== -->
+<h2 id="community-24">14. Community 24</h2>
+<p>Community 24 groups implementation around backend, app, models, mostly in app/models/__init__.py. This section covers 1 nodes and 0 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Community 24 (1 nodes, 0 edges)
+    backend_app_models_init_py_484f6c82("__init__.py")
+    class backend_app_models_init_py_484f6c82 module;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>__init__.py</code><br><small style="color:var(--muted)">app/models/__init__.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Module file in app/models/__init__.py.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>app/models/__init__.py</code></td><td>1 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: No high-confidence call edges detected. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 15. Community 25 ====== -->
+<h2 id="community-25">15. Community 25</h2>
+<p>Community 25 groups implementation around backend, app, services, mostly in app/services/__init__.py. This section covers 1 nodes and 0 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Community 25 (1 nodes, 0 edges)
+    backend_app_services_init_py_ca2c69a5("__init__.py")
+    class backend_app_services_init_py_ca2c69a5 module;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>__init__.py</code><br><small style="color:var(--muted)">app/services/__init__.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Module file in app/services/__init__.py.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>app/services/__init__.py</code></td><td>1 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: No high-confidence call edges detected. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 16. Other ====== -->
+<h2 id="other">16. Other</h2>
+<p>Other groups implementation around frontend, backend, eslintconfigjs, viteconfigts, mostly in app/utils/__init__.py, backend/tests/__init__.py, frontend/eslint.config.js. This section covers 5 nodes and 0 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Other (5 nodes, 0 edges)
+    backend_app_utils_init_py_7db94305("__init__.py")
+    backend_tests_init_py_27f789c1("__init__.py")
+    frontend_src_components_chat_sourcecard_tsx_473acd93("SourceCard.tsx")
+    frontend_eslint_config_js_7bb9359d("eslint.config.js")
+    frontend_vite_config_ts_594883b6("vite.config.ts")
+    class backend_app_utils_init_py_7db94305 module;
+    class backend_tests_init_py_27f789c1 test;
+    class frontend_src_components_chat_sourcecard_tsx_473acd93 ui;
+    class frontend_eslint_config_js_7bb9359d module;
+    class frontend_vite_config_ts_594883b6 module;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>__init__.py</code><br><small style="color:var(--muted)">app/utils/__init__.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Module file in app/utils/__init__.py.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>__init__.py</code><br><small style="color:var(--muted)">backend/tests/__init__.py</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Module file in backend/tests/__init__.py.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>eslint.config.js</code><br><small style="color:var(--muted)">frontend/eslint.config.js</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Reads, resolves, or persists project configuration.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>vite.config.ts</code><br><small style="color:var(--muted)">frontend/vite.config.ts</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Module file in frontend/vite.config.ts.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>SourceCard.tsx</code><br><small style="color:var(--muted)">components/chat/SourceCard.tsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Module file in components/chat/SourceCard.tsx.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>app/utils/__init__.py</code></td><td>1 nodes</td></tr>
+<tr><td><code>backend/tests/__init__.py</code></td><td>1 nodes</td></tr>
+<tr><td><code>frontend/eslint.config.js</code></td><td>1 nodes</td></tr>
+<tr><td><code>components/chat/SourceCard.tsx</code></td><td>1 nodes</td></tr>
+<tr><td><code>frontend/vite.config.ts</code></td><td>1 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: No high-confidence call edges detected. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<h2 id="stats">Project Statistics</h2>
+
+<div class="grid">
+  <div class="card">
+    <h4>Graph</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><td>Nodes</td><td>322</td></tr>
+      <tr><td>Edges</td><td>383</td></tr>
+      <tr><td>Hyperedges</td><td>0</td></tr>
+      <tr><td>Communities</td><td>31</td></tr>
+      <tr><td>Documented Sections</td><td>15</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Edge Confidence</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><td>EXTRACTED</td><td>296</td></tr>
+      <tr><td>INFERRED</td><td>87</td></tr>
+      <tr><td>AMBIGUOUS</td><td>0</td></tr>
+    </table>
+  </div>
+</div>
+
+<div style="text-align:center; padding:40px 0; color: var(--muted); font-size:0.9rem;">
+  <p>Project_starq — Architecture Documentation</p>
+  <p>Generated: 2026-09-04 14:09 UTC · graphify callflow-html</p>
+</div>
+
+</div><!-- .container -->
+
+<script>
+(function () {
+  const mermaidConfig = {
+    startOnLoad: false,
+    theme: 'dark',
+    securityLevel: 'loose',
+    flowchart: { htmlLabels: true, useMaxWidth: true },
+    themeVariables: {
+      primaryColor: '#1e293b',
+      primaryTextColor: '#e2e8f0',
+      primaryBorderColor: '#38bdf8',
+      secondaryColor: '#0f172a',
+      tertiaryColor: '#334155',
+      lineColor: '#64748b',
+      textColor: '#e2e8f0',
+    }
+  };
+
+  mermaid.initialize(mermaidConfig);
+
+  function clamp(value, min, max) {
+    return Math.min(max, Math.max(min, value));
+  }
+
+  function enhanceMermaidDiagrams() {
+    document.querySelectorAll('.mermaid').forEach((container) => {
+      if (container.dataset.zoomReady === 'true') return;
+      const svg = container.querySelector('svg');
+      if (!svg) return;
+
+      container.dataset.zoomReady = 'true';
+      container.classList.add('is-enhanced');
+
+      const viewport = document.createElement('div');
+      viewport.className = 'mermaid-viewport';
+      svg.parentNode.insertBefore(viewport, svg);
+      viewport.appendChild(svg);
+
+      const toolbar = document.createElement('div');
+      toolbar.className = 'mermaid-toolbar';
+      toolbar.innerHTML = [
+        '<button type="button" data-action="zoom-out" title="Zoom out">-</button>',
+        '<span class="zoom-level" data-role="level">100%</span>',
+        '<button type="button" data-action="zoom-in" title="Zoom in">+</button>',
+        '<button type="button" data-action="fit" title="Fit width">Fit</button>',
+        '<button type="button" data-action="reset" title="Reset view">Reset</button>'
+      ].join('');
+      container.insertBefore(toolbar, viewport);
+
+      const state = { scale: 1, x: 0, y: 0, dragging: false, startX: 0, startY: 0, originX: 0, originY: 0 };
+      const level = toolbar.querySelector('[data-role="level"]');
+
+      function applyTransform() {
+        svg.style.transform = `translate(${state.x}px, ${state.y}px) scale(${state.scale})`;
+        level.textContent = `${Math.round(state.scale * 100)}%`;
+      }
+
+      function zoomBy(delta) {
+        state.scale = clamp(state.scale + delta, 0.25, 3);
+        applyTransform();
+      }
+
+      function reset() {
+        state.scale = 1;
+        state.x = 0;
+        state.y = 0;
+        applyTransform();
+      }
+
+      function fitWidth() {
+        const rawWidth = svg.viewBox && svg.viewBox.baseVal && svg.viewBox.baseVal.width
+          ? svg.viewBox.baseVal.width
+          : svg.getBoundingClientRect().width / state.scale;
+        if (!rawWidth) {
+          reset();
+          return;
+        }
+        state.scale = clamp((viewport.clientWidth - 48) / rawWidth, 0.25, 1.4);
+        state.x = 0;
+        state.y = 0;
+        applyTransform();
+      }
+
+      toolbar.addEventListener('click', (event) => {
+        const button = event.target.closest('button[data-action]');
+        if (!button) return;
+        const action = button.dataset.action;
+        if (action === 'zoom-in') zoomBy(0.15);
+        if (action === 'zoom-out') zoomBy(-0.15);
+        if (action === 'fit') fitWidth();
+        if (action === 'reset') reset();
+      });
+
+      viewport.addEventListener('wheel', (event) => {
+        if (!event.ctrlKey && !event.metaKey) return;
+        event.preventDefault();
+        zoomBy(event.deltaY < 0 ? 0.1 : -0.1);
+      }, { passive: false });
+
+      viewport.addEventListener('pointerdown', (event) => {
+        if (event.button !== 0) return;
+        state.dragging = true;
+        state.startX = event.clientX;
+        state.startY = event.clientY;
+        state.originX = state.x;
+        state.originY = state.y;
+        viewport.classList.add('is-dragging');
+        viewport.setPointerCapture(event.pointerId);
+      });
+
+      viewport.addEventListener('pointermove', (event) => {
+        if (!state.dragging) return;
+        state.x = state.originX + event.clientX - state.startX;
+        state.y = state.originY + event.clientY - state.startY;
+        applyTransform();
+      });
+
+      function endDrag(event) {
+        if (!state.dragging) return;
+        state.dragging = false;
+        viewport.classList.remove('is-dragging');
+        if (viewport.hasPointerCapture(event.pointerId)) {
+          viewport.releasePointerCapture(event.pointerId);
+        }
+      }
+
+      viewport.addEventListener('pointerup', endDrag);
+      viewport.addEventListener('pointercancel', endDrag);
+      applyTransform();
+    });
+  }
+
+  function renderMermaid() {
+    const result = mermaid.run
+      ? mermaid.run({ querySelector: '.mermaid' })
+      : Promise.resolve();
+    Promise.resolve(result)
+      .then(enhanceMermaidDiagrams)
+      .catch((error) => {
+        console.error('Mermaid render failed:', error);
+        enhanceMermaidDiagrams();
+      });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', renderMermaid);
+  } else {
+    renderMermaid();
+  }
+})();
+</script>
+
+</body>
+</html>

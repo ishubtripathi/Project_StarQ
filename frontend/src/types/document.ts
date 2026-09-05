@@ -14,7 +14,9 @@ export interface UploadError {
 }
 
 export interface ActiveDocument {
-  document_id: string;
-  filename: string;
-  file_type: string;
+  documents: {
+    document_id: string;
+    filename: string;
+    file_type: string;
+  }[];
 }

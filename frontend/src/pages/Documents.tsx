@@ -5,11 +5,12 @@ import UploadStatus from "../components/documents/UploadStatus";
 import DocumentList from "../components/documents/DocumentList";
 import DocumentDetails from "../components/documents/DocumentDetails";
 
-
 import {
   uploadMultipleDocuments,
   type MultipleUploadResponse,
 } from "../services/documentService";
+
+import { setActiveDocument } from "../services/activeDocument";
 
 type UploadState = "idle" | "uploading" | "success" | "error";
 
@@ -59,8 +60,9 @@ export default function Documents() {
     },
   ]);
 
-  const [selectedDocument, setSelectedDocument] =
-    useState<DocumentItem | null>(null);
+  const [selectedDocument, setSelectedDocument] = useState<DocumentItem | null>(
+    null,
+  );
 
   // ==========================================================
   // HANDLE MULTIPLE UPLOAD
@@ -80,7 +82,7 @@ export default function Documents() {
     setMessage(
       `Uploading ${files.length} ${
         files.length === 1 ? "document" : "documents"
-      }...`
+      }...`,
     );
 
     try {
@@ -137,11 +139,17 @@ export default function Documents() {
       // Add new documents to the beginning of the list
       // ------------------------------------------------------
 
-      setDocuments((current) => [
-        ...newDocuments,
-        ...current,
-      ]);
+      setDocuments((current) => [...newDocuments, ...current]);
 
+      if (newDocuments.length > 0) {
+        setActiveDocument({
+          documents: newDocuments.map((document) => ({
+            document_id: document.name,
+            filename: document.name,
+            file_type: document.type,
+          })),
+        });
+      }
       // ------------------------------------------------------
       // Build status message
       // ------------------------------------------------------
@@ -151,17 +159,15 @@ export default function Documents() {
 
         setMessage(
           `${result.processed_files} ${
-            result.processed_files === 1
-              ? "document"
-              : "documents"
-          } uploaded and processed successfully.`
+            result.processed_files === 1 ? "document" : "documents"
+          } uploaded and processed successfully.`,
         );
       } else {
         setStatus("error");
 
         setMessage(
           `${result.processed_files} processed, ` +
-            `${result.failed_files} failed.`
+            `${result.failed_files} failed.`,
         );
       }
     } catch (error) {
@@ -170,7 +176,7 @@ export default function Documents() {
       setMessage(
         error instanceof Error
           ? error.message
-          : "Something went wrong while uploading."
+          : "Something went wrong while uploading.",
       );
     }
   };
@@ -238,10 +244,7 @@ export default function Documents() {
           ==================================================== */}
 
       <div className="mt-5">
-        <UploadStatus
-          status={status}
-          message={message}
-        />
+        <UploadStatus status={status} message={message} />
       </div>
 
       {/* ====================================================
@@ -250,18 +253,18 @@ export default function Documents() {
 
       <div className="mt-8">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-medium text-white">
-            Your Documents
-          </h2>
+          <h2 className="text-lg font-medium text-white">Your Documents</h2>
 
-          <span className="text-xs text-neutral-500">
-            {documentCountText}
-          </span>
+          <span className="text-xs text-neutral-500">{documentCountText}</span>
         </div>
 
         <DocumentList
           documents={documents}
-          onSelect={(document) => setSelectedDocument(document as DocumentItem)}
+          onSelect={(document) => {
+            const selected = document as DocumentItem;
+
+            setSelectedDocument(selected);
+          }}
         />
       </div>
     </div>

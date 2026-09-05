@@ -1,0 +1,390 @@
+{
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\backend\\app\\main.py": {
+    "mtime": 1788033281.7583115,
+    "hash": "4316f4aaac75df5b9df5de386e506b4d"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\backend\\app\\__init__.py": {
+    "mtime": 1787839198.8839538,
+    "hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\backend\\app\\api\\__init__.py": {
+    "mtime": 1787839198.8859546,
+    "hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\backend\\app\\api\\routes\\documents.py": {
+    "mtime": 1788041760.34787,
+    "hash": "9bc22d5f907958907bd48171996ef281"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\backend\\app\\api\\routes\\health.py": {
+    "mtime": 1787839799.2156887,
+    "hash": "cf3d8bdcc573b9829135fce3eeaae33c"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\backend\\app\\api\\routes\\query.py": {
+    "mtime": 1788034894.937049,
+    "hash": "0b280cae8f269817fb482bf7cb9ef0a2"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\backend\\app\\api\\routes\\__init__.py": {
+    "mtime": 1787839198.8859546,
+    "hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\backend\\app\\core\\config.py": {
+    "mtime": 1787994776.1024168,
+    "hash": "4be8a64aed9d78d06a684e757b1ef52d"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\backend\\app\\core\\__init__.py": {
+    "mtime": 1787839198.8884706,
+    "hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\backend\\app\\models\\chunk.py": {
+    "mtime": 1787994323.6115696,
+    "hash": "002b806d1063e38d68a15c91042de1d2"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\backend\\app\\models\\document.py": {
+    "mtime": 1788037861.7068095,
+    "hash": "7397d232b7ec3bfeb4415825e1131e29"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\backend\\app\\models\\__init__.py": {
+    "mtime": 1787839198.8904686,
+    "hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\backend\\app\\services\\analytics_service.py": {
+    "mtime": 1788009281.6684768,
+    "hash": "3c853803b349f2621ea6312222f2d4d6"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\backend\\app\\services\\content_service.py": {
+    "mtime": 1788037865.587738,
+    "hash": "763b72c62c9dd0d0960a6d17092dca38"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\backend\\app\\services\\csv_service.py": {
+    "mtime": 1787985687.7692711,
+    "hash": "153904f6e096992c5dba378bf2fd6af7"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\backend\\app\\services\\csv_statistics.py": {
+    "mtime": 1788009044.995968,
+    "hash": "5f2dcc9aa20e9ee2713515a00ea839b7"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\backend\\app\\services\\document_service.py": {
+    "mtime": 1788008817.6050973,
+    "hash": "2818cc712ff0efca2a5325024e34d549"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\backend\\app\\services\\embedding_service.py": {
+    "mtime": 1788037864.5927744,
+    "hash": "6dc3de954759da3208d82e4655b75576"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\backend\\app\\services\\insight_service.py": {
+    "mtime": 1788009194.8170526,
+    "hash": "6ad8c3acb98957c15ac79f397d715ec4"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\backend\\app\\services\\llm_service.py": {
+    "mtime": 1788040758.639138,
+    "hash": "a546901be0a4841f79c0ed7131599f24"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\backend\\app\\services\\pdf_service.py": {
+    "mtime": 1787863962.520709,
+    "hash": "6bd239a2ffb806853d33ec9744253cbd"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\backend\\app\\services\\pdf_statistics.py": {
+    "mtime": 1788008965.9691362,
+    "hash": "da5f4c0b168c70b3bdf8e1b7e5a4ecbf"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\backend\\app\\services\\rag_service.py": {
+    "mtime": 1788040444.2898767,
+    "hash": "05733ae311e462653e06775d7c2e97dc"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\backend\\app\\services\\retrieval_service.py": {
+    "mtime": 1788039206.5537279,
+    "hash": "22303cd2c0e4b147bba28bd2bcf211b9"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\backend\\app\\services\\vector_service.py": {
+    "mtime": 1788037863.8352265,
+    "hash": "5983b4b1ed85f539894de4ddfe496545"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\backend\\app\\services\\__init__.py": {
+    "mtime": 1787839198.8914678,
+    "hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\backend\\app\\utils\\__init__.py": {
+    "mtime": 1787839198.8924694,
+    "hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\backend\\tests\\test_analytics_service.py": {
+    "mtime": 1788009322.1568317,
+    "hash": "3acea3c811dd28febdc8f4c0acfedddb"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\backend\\tests\\test_batch_embeddings.py": {
+    "mtime": 1788000983.949098,
+    "hash": "c14e2793aa4b67fc3837086dadfac93b"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\backend\\tests\\test_chunking.py": {
+    "mtime": 1787994077.939992,
+    "hash": "2968350457575ebc776226b7c9a032a6"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\backend\\tests\\test_chunk_config.py": {
+    "mtime": 1787995005.6002002,
+    "hash": "4da12a6a5552b71fe9a9dd4f5e7d5e35"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\backend\\tests\\test_chunk_embeddings.py": {
+    "mtime": 1788000839.2469945,
+    "hash": "4f33e0da2d6117c735f2ea16bd9745fe"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\backend\\tests\\test_chunk_metadata.py": {
+    "mtime": 1787994611.6449964,
+    "hash": "e948a414759a26e61001f6380c28538d"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\backend\\tests\\test_context_builder.py": {
+    "mtime": 1788004077.6235094,
+    "hash": "8d01caab2aa26ebbea097968c5cf5ca4"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\backend\\tests\\test_csv_statistics.py": {
+    "mtime": 1788009151.256356,
+    "hash": "2c4dbbeda4e2714a8d2ced5e25193093"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\backend\\tests\\test_csv_text.py": {
+    "mtime": 1787995125.291216,
+    "hash": "2033ee14ad30391eb058d1e52e3d4ef0"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\backend\\tests\\test_document_overview.py": {
+    "mtime": 1788008835.6795592,
+    "hash": "a5cc6ae34384d4783cf2c3450bdf54d2"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\backend\\tests\\test_embedding.py": {
+    "mtime": 1787999696.5818603,
+    "hash": "a4ee835fc3a15dab273ab57a0bbd6bc6"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\backend\\tests\\test_insight_service.py": {
+    "mtime": 1788008918.689667,
+    "hash": "cb659e3b9e05cad9842fb6ec7dfac42b"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\backend\\tests\\test_key_insights.py": {
+    "mtime": 1788009212.1614454,
+    "hash": "c84a83336492a75c88be136cd295ee2c"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\backend\\tests\\test_llm.py": {
+    "mtime": 1788005105.4486525,
+    "hash": "76dc6e3d8c5e3facb00c86414a61a1ed"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\backend\\tests\\test_no_answer.py": {
+    "mtime": 1788006628.995676,
+    "hash": "3373b84eb468caf2243323633a557500"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\backend\\tests\\test_pdf_statistics.py": {
+    "mtime": 1788008981.4455428,
+    "hash": "693ffa9491ed5e4558de8ff8406f81f4"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\backend\\tests\\test_phase3.py": {
+    "mtime": 1787995413.2435727,
+    "hash": "583b85c641c806bb9ffa1da1531b9f4d"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\backend\\tests\\test_phase4.py": {
+    "mtime": 1788002820.042213,
+    "hash": "e24a270fd4bc6ca0e05ed2a6e38330c2"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\backend\\tests\\test_phase5.py": {
+    "mtime": 1788007665.3095882,
+    "hash": "962bef7ba68f351a891509c28abc719c"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\backend\\tests\\test_prompt_builder.py": {
+    "mtime": 1788005737.458198,
+    "hash": "7306f06d14e05a4f6033ae38a8d45a72"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\backend\\tests\\test_query_api.py": {
+    "mtime": 1788007604.1371055,
+    "hash": "e69a47271b35c2b16764da16c3d1c4ff"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\backend\\tests\\test_rag_pipeline.py": {
+    "mtime": 1788005873.5181026,
+    "hash": "9d0253161d461e85b54e8e64a98ccbcb"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\backend\\tests\\test_rag_service.py": {
+    "mtime": 1788003917.6935427,
+    "hash": "85fb10367863caf644aee4f43fb493a7"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\backend\\tests\\test_retrieval_pipeline.py": {
+    "mtime": 1788002501.8801682,
+    "hash": "1f5055b4a1ec6aaf5cdb4147962d591d"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\backend\\tests\\test_similarity_search.py": {
+    "mtime": 1788002388.8121953,
+    "hash": "145d914148350cb8f8b0fc3d4c43b042"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\backend\\tests\\test_source_handling.py": {
+    "mtime": 1788006077.6043508,
+    "hash": "33b01e1407e72385eb5d1ceba3fc70e7"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\backend\\tests\\test_text_cleaning.py": {
+    "mtime": 1787993264.3500507,
+    "hash": "fc09f3f3bce126877702b0c916c45321"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\backend\\tests\\test_unified_chunks.py": {
+    "mtime": 1787995334.2177627,
+    "hash": "bffd25aabd10d1ce45d04ef19d9b59ee"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\backend\\tests\\test_vector_db.py": {
+    "mtime": 1788001136.335615,
+    "hash": "61a755b7d54f5a1ad9552d7a1b5f7877"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\backend\\tests\\test_vector_storage.py": {
+    "mtime": 1788002315.7790399,
+    "hash": "36e6f35e02efc6c372a6124ac9616cb4"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\backend\\tests\\__init__.py": {
+    "mtime": 1787839198.8934686,
+    "hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\frontend\\eslint.config.js": {
+    "mtime": 1788030607.4066215,
+    "hash": "0355276bc79439afe3c53e3a2470ca1e"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\frontend\\vite.config.ts": {
+    "mtime": 1788031026.537661,
+    "hash": "7a69211ab98723578adbdbe1d8e16ff5"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\frontend\\src\\App.tsx": {
+    "mtime": 1788033923.9286091,
+    "hash": "54cb1803dfae752e2b9b2d9fe885ed91"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\frontend\\src\\main.tsx": {
+    "mtime": 1788031131.9460318,
+    "hash": "72064af32278ddc17fd2a7db0ba71e06"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\frontend\\src\\components\\chat\\ChatHeader.tsx": {
+    "mtime": 1788036987.0040948,
+    "hash": "82846f793b37aa4226df0e9557b80d53"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\frontend\\src\\components\\chat\\ChatInput.tsx": {
+    "mtime": 1788033814.9251611,
+    "hash": "f48651560592209b83a96ebcecfd2310"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\frontend\\src\\components\\chat\\ChatMessages.tsx": {
+    "mtime": 1788033808.7007637,
+    "hash": "091a9215d1b0746844f653c538007371"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\frontend\\src\\components\\chat\\MessageBubble.tsx": {
+    "mtime": 1788033800.3001397,
+    "hash": "32235a9ec1c19a323263e10dc9a957d8"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\frontend\\src\\components\\chat\\SourceCard.tsx": {
+    "mtime": 1788033675.7969315,
+    "hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\frontend\\src\\components\\dashboard\\AnalyticsCard.tsx": {
+    "mtime": 1788031695.3896945,
+    "hash": "f5ba209f7ed9b7221e797c3db2194aee"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\frontend\\src\\components\\dashboard\\DocumentOverview.tsx": {
+    "mtime": 1788031675.1178186,
+    "hash": "2c1d35ca0adc3f8fdd155c7246c12c55"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\frontend\\src\\components\\dashboard\\ImportantInformation.tsx": {
+    "mtime": 1788031682.8345697,
+    "hash": "d6341873ef82296598308c4da33fcbbf"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\frontend\\src\\components\\dashboard\\KeyInsights.tsx": {
+    "mtime": 1788031688.268718,
+    "hash": "c79ad5f3cf2901fe3bb08463b432eb29"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\frontend\\src\\components\\dashboard\\RecentDocuments.tsx": {
+    "mtime": 1788031701.3077772,
+    "hash": "e9f8902908bb2f88c058f426f4662d39"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\frontend\\src\\components\\dashboard\\StatCard.tsx": {
+    "mtime": 1788031665.2443087,
+    "hash": "b6988cd737fed98020fbd93267c1a064"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\frontend\\src\\components\\documents\\DocumentCard.tsx": {
+    "mtime": 1788033414.8552403,
+    "hash": "d726c9746f8d27e7ee39e5af6f5610ec"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\frontend\\src\\components\\documents\\DocumentDetails.tsx": {
+    "mtime": 1788033453.0482347,
+    "hash": "2b2e11fd35926ad2b7a1eb8cfa7d9c79"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\frontend\\src\\components\\documents\\DocumentList.tsx": {
+    "mtime": 1788033429.0867395,
+    "hash": "c585059818b9146e75c338b2be25a5eb"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\frontend\\src\\components\\documents\\UploadStatus.tsx": {
+    "mtime": 1788032110.8108673,
+    "hash": "a74c522b8c1b465ebd6e6f6e59d149bd"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\frontend\\src\\components\\documents\\UploadZone.tsx": {
+    "mtime": 1788042200.606113,
+    "hash": "1c4d8ca20e2fb5190d20a76da87a5056"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\frontend\\src\\components\\layout\\AppLayout.tsx": {
+    "mtime": 1788031854.2107618,
+    "hash": "3a6b7301385d47470277e6c1c8de9e18"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\frontend\\src\\components\\layout\\MobileHeader.tsx": {
+    "mtime": 1788031326.0336556,
+    "hash": "18876fe68b2c3cce85fcf9627633ef71"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\frontend\\src\\components\\layout\\Sidebar.tsx": {
+    "mtime": 1788031971.5603561,
+    "hash": "64cb1da551a91c9833b6d6c898f4ee98"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\frontend\\src\\data\\mockDashboard.ts": {
+    "mtime": 1788031641.0111485,
+    "hash": "af915e88c16d48f2f2877fd23bb728fd"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\frontend\\src\\pages\\Chat.tsx": {
+    "mtime": 1788037102.6823308,
+    "hash": "718e89e4e1f30f2f1e75dcc21526ec75"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\frontend\\src\\pages\\Collections.tsx": {
+    "mtime": 1788031361.2816658,
+    "hash": "4a4e3d4ab4d5ec42e0902035786841e0"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\frontend\\src\\pages\\Dashboard.tsx": {
+    "mtime": 1788031731.8945735,
+    "hash": "6394c3d5a1e260e2cf218fa85a027fd2"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\frontend\\src\\pages\\Documents.tsx": {
+    "mtime": 1788042982.455848,
+    "hash": "3a4ec0a6b7368eb20c544c0a4f06ae93"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\frontend\\src\\pages\\Settings.tsx": {
+    "mtime": 1788031368.3414319,
+    "hash": "72f3cdff36a94285113032d061e8711e"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\frontend\\src\\services\\activeDocument.ts": {
+    "mtime": 1788035999.697922,
+    "hash": "bc58757348d6aefcaed101745cd53c01"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\frontend\\src\\services\\documentService.ts": {
+    "mtime": 1788042182.3091717,
+    "hash": "ddaa0dadaa7311c7a0f27c84fa776025"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\frontend\\src\\services\\queryService.ts": {
+    "mtime": 1788037225.3530133,
+    "hash": "119de2365ae1ea79c1d031001cb4e8ee"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\frontend\\src\\types\\chat.ts": {
+    "mtime": 1788037209.0872247,
+    "hash": "27edd9af4ffeb6d0dec960558f5058cd"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\frontend\\src\\types\\document.ts": {
+    "mtime": 1788042898.0660734,
+    "hash": "1136e12c2830ce4e12bc4fba8be81736"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\README.md": {
+    "mtime": 1788009264.9707413,
+    "hash": "789381be7d8a2327777ded110c6e4024"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\backend\\requirements.txt": {
+    "mtime": 1787845249.49116,
+    "hash": "383bba4393512b918e0cc03064bf77ff"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\frontend\\index.html": {
+    "mtime": 1788030840.0183427,
+    "hash": "a2185828d0bd5fab523346b8bf465329"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\frontend\\public\\favicon.svg": {
+    "mtime": 1788024473.40643,
+    "hash": "7e840862161341271697daa99a40d76b"
+  },
+  "C:\\Users\\shubh\\Desktop\\Project_starq\\frontend\\public\\icons.svg": {
+    "mtime": 1788024473.4374783,
+    "hash": "3b4fcfcf393eca4d264dca4a4663bc37"
+  }
+}

@@ -4,29 +4,27 @@ const API_BASE_URL = "http://127.0.0.1:8000";
 
 export async function sendQuery(
   query: string,
-  documentId: string
+  documentIds: string[]
 ): Promise<QueryResponse> {
   if (!query.trim()) {
     throw new Error("Query cannot be empty.");
   }
 
-  if (!documentId) {
-    throw new Error("No document selected.");
+  if (documentIds.length === 0) {
+    throw new Error("No documents selected.");
   }
 
   const response = await fetch(
     `${API_BASE_URL}/api/v1/query`,
     {
       method: "POST",
-
       headers: {
         "Content-Type": "application/json",
       },
-
       body: JSON.stringify({
         query: query.trim(),
         top_k: 5,
-        document_id: documentId,
+        document_ids: documentIds,
       }),
     }
   );

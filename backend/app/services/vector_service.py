@@ -29,7 +29,7 @@ def get_collection():
 def search_similar_chunks(
     query_embedding: list[float],
     top_k: int = 5,
-    document_id: str | None = None,
+    document_ids: list[str] | None = None,
 ) -> dict:
     """
     Search ChromaDB for the most similar document chunks.
@@ -54,9 +54,11 @@ def search_similar_chunks(
         ],
     }
 
-    if document_id:
+    if document_ids:
         query_kwargs["where"] = {
-            "document_id": document_id
+            "document_id": {
+                "$in": document_ids
+            }
         }
 
     results = collection.query(**query_kwargs)

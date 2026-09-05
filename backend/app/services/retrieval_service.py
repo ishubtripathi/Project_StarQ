@@ -9,7 +9,7 @@ def retrieve_relevant_chunks(
     query: str,
     top_k: int = 5,
     distance_threshold: float = DEFAULT_DISTANCE_THRESHOLD,
-    document_id: str | None = None,
+    document_ids: list[str] | None = None,
 ) -> dict:
     """
     Generate a query embedding and retrieve relevant
@@ -35,7 +35,7 @@ def retrieve_relevant_chunks(
     results = search_similar_chunks(
         query_embedding=query_embedding,
         top_k=top_k,
-        document_id=document_id,
+        document_ids=document_ids,
     )
 
     return results

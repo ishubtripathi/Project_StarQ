@@ -24,9 +24,9 @@ class QueryRequest(BaseModel):
         le=20,
     )
 
-    document_id: str | None = Field(
-        default=None,
-        min_length=1,
+    document_ids: list[str] | None = Field(
+    default=None,
+    min_length=1,
     )
 
 
@@ -40,7 +40,7 @@ async def query_documents(
         result = process_query(
             query=request.query,
             top_k=request.top_k,
-            document_id=request.document_id,
+            document_ids=request.document_ids,
         )
 
         return result

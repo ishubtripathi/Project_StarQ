@@ -1,9 +1,9 @@
 export interface Source {
-  filename: string | null;
-  file_type: string | null;
-  page_number?: number | null;
-  row_number?: number | null;
-  distance?: number | null;
+  filename?: string;
+  file_type?: string;
+  page_number?: number;
+  row_number?: number;
+  distance?: number;
 }
 
 export interface QueryResponse {

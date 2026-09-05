@@ -40,7 +40,7 @@ def build_sources(
 def process_query(
     query: str,
     top_k: int = 5,
-    document_id: str | None = None,
+    document_ids: list[str] | None = None,
 ) -> dict:
 
     start_time = time.time()
@@ -54,7 +54,7 @@ def process_query(
     results = retrieve_relevant_chunks(
         query=query,
         top_k=top_k,
-        document_id=document_id,
+        document_ids=document_ids,
     )
 
     retrieval_time = time.time() - retrieval_start

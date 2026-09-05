@@ -1,6 +1,6 @@
 import type { ActiveDocument } from "../types/document";
 
-const STORAGE_KEY = "starq_active_document";
+const STORAGE_KEY = "starq_active_documents";
 
 export function setActiveDocument(
   document: ActiveDocument
