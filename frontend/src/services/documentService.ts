@@ -1,8 +1,21 @@
-import type { UploadResponse } from "../types/document";
+import type {
+  DocumentResponse,
+  UploadResponse,
+} from "../types/document";
 
 const API_BASE_URL = "http://127.0.0.1:8000";
 
+export async function getDocuments(): Promise<DocumentResponse[]> {
+  const response = await fetch(
+    `${API_BASE_URL}/api/v1/documents`,
+  );
 
+  if (!response.ok) {
+    throw new Error("Failed to fetch documents.");
+  }
+
+  return response.json();
+}
 // ==========================================================
 // SINGLE DOCUMENT UPLOAD
 // ==========================================================

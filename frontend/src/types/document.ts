@@ -1,3 +1,13 @@
+export interface DocumentResponse {
+  document_id: string;
+  filename: string;
+  file_type: string;
+  status: string;
+  metadata: Record<string, unknown>;
+  statistics: Record<string, unknown>;
+  content?: unknown;
+}
+
 export interface UploadResponse {
   document_id: string;
   filename: string;

@@ -1,4 +1,5 @@
 import fitz
+from app.services.pdf_statistics import calculate_pdf_statistics
 
 
 PDF_SIGNATURE = b"%PDF-"
@@ -86,38 +87,15 @@ def extract_pdf_metadata(file_path: str) -> dict:
     try:
         metadata = document.metadata
 
-        total_pages = len(document)
-        total_images = 0
-        total_characters = 0
-        pages_with_text = 0
-        pages_without_text = 0
-
-        for page in document:
-
-            text = page.get_text("text").strip()
-
-            image_count = len(
-                page.get_image_info()
-            )
-
-            total_characters += len(text)
-            total_images += image_count
-
-            if text:
-                pages_with_text += 1
-            else:
-                pages_without_text += 1
-
-        return {
-            "metadata": metadata,
-            "statistics": {
-                "total_pages": total_pages,
-                "total_characters": total_characters,
-                "total_images": total_images,
-                "pages_with_text": pages_with_text,
-                "pages_without_text": pages_without_text,
-            },
-        }
-
     finally:
         document.close()
+
+    with open(file_path, "rb") as file:
+        file_bytes = file.read()
+
+    statistics = calculate_pdf_statistics(file_bytes)
+
+    return {
+        "metadata": metadata,
+        "statistics": statistics,
+    }

@@ -13,6 +13,8 @@ from app.models.document import DocumentResponse
 
 from app.services.document_repository import (
     save_document,
+    get_documents,
+    get_document,
 )
 
 
@@ -291,6 +293,25 @@ def process_csv_file(
         },
         "content": parsed_data["rows"],
     }
+
+
+@router.get("", response_model=list[DocumentResponse])
+def list_documents():
+    return get_documents()
+
+
+@router.get("/{document_id}", response_model=DocumentResponse)
+def get_document_by_id(document_id: str):
+    document = get_document(document_id)
+
+    if document is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Document not found.",
+        )
+
+    return document
+
 
 
 # ==========================================================
