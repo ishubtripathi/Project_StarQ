@@ -11,6 +11,11 @@ from fastapi import (
 
 from app.models.document import DocumentResponse
 
+from app.services.document_repository import (
+    save_document,
+)
+
+
 from app.services.pdf_service import (
     validate_pdf,
     extract_pdf_text,
@@ -372,8 +377,9 @@ async def upload_document(
         # --------------------------------------------------
         # Return response
         # --------------------------------------------------
-
-        return DocumentResponse(
+        
+        
+        document_response = DocumentResponse(
             document_id=result["filename"],
             filename=result["filename"],
             file_type=result["file_type"],
@@ -382,6 +388,11 @@ async def upload_document(
             statistics=result["statistics"],
             content=result["content"],
         )
+
+        save_document(document_response)
+
+        return document_response
+
 
     except HTTPException:
         raise
@@ -527,6 +538,19 @@ async def upload_multiple_documents(
             # --------------------------------------------------
             # Successful document
             # --------------------------------------------------
+            
+            
+            document_response = DocumentResponse(
+                document_id=result["filename"],
+                filename=result["filename"],
+                file_type=result["file_type"],
+                status=result["status"],
+                metadata=result["metadata"],
+                statistics=result["statistics"],
+                content=result["content"],
+            )
+
+            save_document(document_response)
 
             processed_files += 1
 
@@ -535,7 +559,7 @@ async def upload_multiple_documents(
                 "file_type": result["file_type"],
                 "status": result["status"],
                 "metadata": result["metadata"],
-                "statistics": result["statistics"],
+             "statistics": result["statistics"],
             })
 
         except ValueError as exc:
