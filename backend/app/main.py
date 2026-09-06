@@ -9,6 +9,7 @@ from app.api.routes.query import router as query_router
 from app.api.routes.documents import router as documents_router
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.utils import get_openapi
+from app.api.routes.collections import router as collections_router
 
 
 app = FastAPI(
@@ -31,6 +32,7 @@ app.add_middleware(
 app.include_router(health_router)
 app.include_router(query_router)
 app.include_router(documents_router)
+app.include_router(collections_router)
 
 
 def custom_openapi():

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   ExternalLink,
@@ -11,81 +11,32 @@ import {
 
 import { useDocuments } from "../context/DocumentContext";
 import { setActiveDocument } from "../services/activeDocument";
+import {
+  createCollection,
+  deleteCollection,
+  getCollections,
+} from "../services/collectionService";
 
-interface CollectionDocument {
-  document_id: string;
-  filename: string;
-  file_type: string;
-}
-
-interface Collection {
-  id: string;
-  name: string;
-  description: string;
-  documents: CollectionDocument[];
-  updatedAt: string;
-}
+import type { Collection } from "../types/collection";
 
 export default function Collections() {
-  const [collections, setCollections] = useState<Collection[]>([
-    {
-      id: "collection-1",
-      name: "Annual Reports",
-      description: "Company annual reports and financial documents.",
-      documents: [
-        {
-          document_id: "annual-report-2024.pdf",
-          filename: "annual-report-2024.pdf",
-          file_type: "pdf",
-        },
-        {
-          document_id: "annual-report-2025.pdf",
-          filename: "annual-report-2025.pdf",
-          file_type: "pdf",
-        },
-        {
-          document_id: "financial-summary.csv",
-          filename: "financial-summary.csv",
-          file_type: "csv",
-        },
-      ],
-      updatedAt: "Today",
-    },
-    {
-      id: "collection-2",
-      name: "Financial Data",
-      description: "Financial CSV files and related documents.",
-      documents: [
-        {
-          document_id: "financial-data.csv",
-          filename: "financial-data.csv",
-          file_type: "csv",
-        },
-        {
-          document_id: "financial-report.pdf",
-          filename: "financial-report.pdf",
-          file_type: "pdf",
-        },
-      ],
-      updatedAt: "Yesterday",
-    },
-  ]);
-
+  const [collections, setCollections] = useState<Collection[]>([]);
   const [showCreateForm, setShowCreateForm] = useState(false);
-
   const [collectionName, setCollectionName] = useState("");
-
-  const [collectionDescription, setCollectionDescription] = useState("");
-
+  const [collectionDescription, setCollectionDescription] =
+    useState("");
   const [openMenu, setOpenMenu] = useState<string | null>(null);
-
-  const navigate = useNavigate();
-
-  const { documents } = useDocuments();
-  const [selectedDocumentIds, setSelectedDocumentIds] = useState<string[]>([]);
-
+  const [selectedDocumentIds, setSelectedDocumentIds] = useState<
+    string[]
+  >([]);
   const [selectedCollection, setSelectedCollection] =
     useState<Collection | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [creating, setCreating] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const navigate = useNavigate();
+  const { documents } = useDocuments();
 
   const toggleDocumentSelection = (documentId: string) => {
     setSelectedDocumentIds((current) =>
@@ -108,43 +59,94 @@ export default function Collections() {
     navigate("/chat");
   };
 
-  const handleCreateCollection = () => {
+  const handleCreateCollection = async () => {
     const name = collectionName.trim();
 
     if (!name || selectedDocumentIds.length === 0) {
       return;
     }
 
-    const selectedDocuments: CollectionDocument[] = documents
-      .filter((document) => selectedDocumentIds.includes(document.id))
+    const selectedDocuments = documents
+      .filter((document) =>
+        selectedDocumentIds.includes(document.id),
+      )
       .map((document) => ({
         document_id: document.name,
         filename: document.name,
         file_type: document.type,
       }));
 
-    const newCollection: Collection = {
-      id: `${Date.now()}`,
-      name,
-      description: collectionDescription.trim() || "No description provided.",
-      documents: selectedDocuments,
-      updatedAt: "Just now",
-    };
+    try {
+      setCreating(true);
+      setError(null);
 
-    setCollections((current) => [newCollection, ...current]);
+      const newCollection = await createCollection({
+        name,
+        description:
+          collectionDescription.trim() ||
+          "No description provided.",
+        documents: selectedDocuments,
+      });
 
-    setCollectionName("");
-    setCollectionDescription("");
-    setSelectedDocumentIds([]);
-    setShowCreateForm(false);
+      setCollections((current) => [
+        newCollection,
+        ...current,
+      ]);
+
+      setCollectionName("");
+      setCollectionDescription("");
+      setSelectedDocumentIds([]);
+      setShowCreateForm(false);
+    } catch (error) {
+      console.error(
+        "Failed to create collection:",
+        error,
+      );
+
+      setError(
+        error instanceof Error
+          ? error.message
+          : "Failed to create collection.",
+      );
+    } finally {
+      setCreating(false);
+    }
   };
 
-  const handleDeleteCollection = (collectionId: string) => {
-    setCollections((current) =>
-      current.filter((collection) => collection.id !== collectionId),
-    );
+  const handleDeleteCollection = async (
+    collectionId: string,
+  ) => {
+    try {
+      setError(null);
 
-    setOpenMenu(null);
+      await deleteCollection(collectionId);
+
+      setCollections((current) =>
+        current.filter(
+          (collection) =>
+            collection.collection_id !== collectionId,
+        ),
+      );
+
+      if (
+        selectedCollection?.collection_id === collectionId
+      ) {
+        setSelectedCollection(null);
+      }
+
+      setOpenMenu(null);
+    } catch (error) {
+      console.error(
+        "Failed to delete collection:",
+        error,
+      );
+
+      setError(
+        error instanceof Error
+          ? error.message
+          : "Failed to delete collection.",
+      );
+    }
   };
 
   const handleCancelCreate = () => {
@@ -153,6 +155,34 @@ export default function Collections() {
     setSelectedDocumentIds([]);
     setShowCreateForm(false);
   };
+
+  useEffect(() => {
+    const loadCollections = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const data = await getCollections();
+
+        setCollections(data);
+      } catch (error) {
+        console.error(
+          "Failed to load collections:",
+          error,
+        );
+
+        setError(
+          error instanceof Error
+            ? error.message
+            : "Failed to load collections.",
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadCollections();
+  }, []);
 
   if (selectedCollection) {
     return (
@@ -182,7 +212,9 @@ export default function Collections() {
         {/* Collection Info */}
         <div className="mt-8 flex items-center justify-between">
           <div>
-            <h2 className="text-lg font-medium text-white">Documents</h2>
+            <h2 className="text-lg font-medium text-white">
+              Documents
+            </h2>
 
             <p className="mt-1 text-sm text-neutral-500">
               {selectedCollection.documents.length}{" "}
@@ -195,8 +227,12 @@ export default function Collections() {
 
           <button
             type="button"
-            disabled={selectedCollection.documents.length === 0}
-            onClick={() => handleChatWithCollection(selectedCollection)}
+            disabled={
+              selectedCollection.documents.length === 0
+            }
+            onClick={() =>
+              handleChatWithCollection(selectedCollection)
+            }
             className="rounded-lg bg-white px-4 py-2.5 text-sm font-medium text-black transition hover:bg-neutral-200 disabled:cursor-not-allowed disabled:opacity-40"
           >
             Chat with Collection
@@ -207,14 +243,18 @@ export default function Collections() {
         <div className="mt-5 space-y-3">
           {selectedCollection.documents.length === 0 ? (
             <div className="rounded-xl border border-dashed border-neutral-800 bg-[#111111] px-6 py-12 text-center">
-              <FileText size={22} className="mx-auto text-neutral-500" />
+              <FileText
+                size={22}
+                className="mx-auto text-neutral-500"
+              />
 
               <h3 className="mt-3 text-sm font-medium text-white">
                 No documents
               </h3>
 
               <p className="mt-1 text-sm text-neutral-500">
-                This collection doesn't contain any documents yet.
+                This collection doesn't contain any
+                documents yet.
               </p>
             </div>
           ) : (
@@ -225,7 +265,10 @@ export default function Collections() {
               >
                 <div className="flex min-w-0 items-center gap-3">
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-neutral-800 bg-neutral-900">
-                    <FileText size={17} className="text-neutral-300" />
+                    <FileText
+                      size={17}
+                      className="text-neutral-300"
+                    />
                   </div>
 
                   <div className="min-w-0">
@@ -270,12 +313,22 @@ export default function Collections() {
         </button>
       </div>
 
+      {/* Error */}
+      {error && (
+        <div className="mt-5 rounded-lg border border-red-900/50 bg-red-950/20 px-4 py-3 text-sm text-red-400">
+          {error}
+        </div>
+      )}
+
       {/* Create Collection */}
       {showCreateForm && (
         <div className="mt-6 rounded-xl border border-neutral-800 bg-[#111111] p-5">
           <div className="flex items-center gap-3">
             <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-neutral-800 bg-neutral-900">
-              <Folder size={17} className="text-neutral-300" />
+              <Folder
+                size={17}
+                className="text-neutral-300"
+              />
             </div>
 
             <div>
@@ -299,7 +352,9 @@ export default function Collections() {
               <input
                 type="text"
                 value={collectionName}
-                onChange={(event) => setCollectionName(event.target.value)}
+                onChange={(event) =>
+                  setCollectionName(event.target.value)
+                }
                 placeholder="e.g. Research Papers"
                 className="w-full rounded-lg border border-neutral-800 bg-[#0b0b0b] px-3 py-2.5 text-sm text-white outline-none placeholder:text-neutral-600 focus:border-neutral-600"
               />
@@ -315,7 +370,9 @@ export default function Collections() {
                 type="text"
                 value={collectionDescription}
                 onChange={(event) =>
-                  setCollectionDescription(event.target.value)
+                  setCollectionDescription(
+                    event.target.value,
+                  )
                 }
                 placeholder="What is this collection about?"
                 className="w-full rounded-lg border border-neutral-800 bg-[#0b0b0b] px-3 py-2.5 text-sm text-white outline-none placeholder:text-neutral-600 focus:border-neutral-600"
@@ -336,7 +393,10 @@ export default function Collections() {
 
               {documents.length === 0 ? (
                 <div className="rounded-lg border border-dashed border-neutral-800 bg-[#0b0b0b] px-4 py-6 text-center">
-                  <FileText size={20} className="mx-auto text-neutral-600" />
+                  <FileText
+                    size={20}
+                    className="mx-auto text-neutral-600"
+                  />
 
                   <p className="mt-2 text-sm text-neutral-500">
                     No documents available.
@@ -349,15 +409,20 @@ export default function Collections() {
               ) : (
                 <div className="max-h-64 space-y-2 overflow-y-auto">
                   {documents.map((document) => {
-                    const isSelected = selectedDocumentIds.includes(
-                      document.id,
-                    );
+                    const isSelected =
+                      selectedDocumentIds.includes(
+                        document.id,
+                      );
 
                     return (
                       <button
                         type="button"
                         key={document.id}
-                        onClick={() => toggleDocumentSelection(document.id)}
+                        onClick={() =>
+                          toggleDocumentSelection(
+                            document.id,
+                          )
+                        }
                         className={`flex w-full items-center gap-3 rounded-lg border px-3 py-3 text-left transition ${
                           isSelected
                             ? "border-neutral-500 bg-neutral-900"
@@ -400,7 +465,8 @@ export default function Collections() {
               <button
                 type="button"
                 onClick={handleCancelCreate}
-                className="rounded-lg border border-neutral-800 px-4 py-2 text-sm text-neutral-400 transition hover:bg-neutral-900 hover:text-white"
+                disabled={creating}
+                className="rounded-lg border border-neutral-800 px-4 py-2 text-sm text-neutral-400 transition hover:bg-neutral-900 hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
               >
                 Cancel
               </button>
@@ -409,11 +475,13 @@ export default function Collections() {
                 type="button"
                 onClick={handleCreateCollection}
                 disabled={
-                  !collectionName.trim() || selectedDocumentIds.length === 0
+                  creating ||
+                  !collectionName.trim() ||
+                  selectedDocumentIds.length === 0
                 }
                 className="rounded-lg bg-white px-4 py-2 text-sm font-medium text-black transition hover:bg-neutral-200 disabled:cursor-not-allowed disabled:opacity-40"
               >
-                Create
+                {creating ? "Creating..." : "Create"}
               </button>
             </div>
           </div>
@@ -422,11 +490,20 @@ export default function Collections() {
 
       {/* Collections */}
       <div className="mt-8">
-        {collections.length === 0 ? (
+        {loading ? (
+          <div className="rounded-xl border border-neutral-800 bg-[#111111] px-6 py-14 text-center">
+            <p className="text-sm text-neutral-500">
+              Loading collections...
+            </p>
+          </div>
+        ) : collections.length === 0 ? (
           /* Empty State */
           <div className="rounded-xl border border-dashed border-neutral-800 bg-[#111111] px-6 py-14 text-center">
             <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl border border-neutral-800 bg-neutral-900">
-              <Folder size={21} className="text-neutral-400" />
+              <Folder
+                size={21}
+                className="text-neutral-400"
+              />
             </div>
 
             <h2 className="mt-4 text-sm font-medium text-white">
@@ -434,7 +511,8 @@ export default function Collections() {
             </h2>
 
             <p className="mx-auto mt-1 max-w-sm text-sm text-neutral-500">
-              Create a collection to organize related documents together.
+              Create a collection to organize related
+              documents together.
             </p>
 
             <button
@@ -454,13 +532,16 @@ export default function Collections() {
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {collections.map((collection) => (
               <div
-                key={collection.id}
+                key={collection.collection_id}
                 className="group rounded-xl border border-neutral-800 bg-[#111111] p-5 transition hover:border-neutral-700 hover:bg-[#151515]"
               >
                 {/* Card Header */}
                 <div className="flex items-start justify-between">
                   <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-neutral-800 bg-neutral-900">
-                    <Folder size={18} className="text-neutral-300" />
+                    <Folder
+                      size={18}
+                      className="text-neutral-300"
+                    />
                   </div>
 
                   {/* Options Menu */}
@@ -469,7 +550,10 @@ export default function Collections() {
                       type="button"
                       onClick={() =>
                         setOpenMenu(
-                          openMenu === collection.id ? null : collection.id,
+                          openMenu ===
+                            collection.collection_id
+                            ? null
+                            : collection.collection_id,
                         )
                       }
                       className="rounded-lg p-2 text-neutral-600 transition hover:bg-neutral-900 hover:text-neutral-300"
@@ -478,13 +562,16 @@ export default function Collections() {
                       <MoreHorizontal size={18} />
                     </button>
 
-                    {openMenu === collection.id && (
+                    {openMenu ===
+                      collection.collection_id && (
                       <div className="absolute right-0 top-11 z-20 w-44 overflow-hidden rounded-lg border border-neutral-800 bg-[#151515] shadow-xl">
                         {/* Open Collection */}
                         <button
                           type="button"
                           onClick={() => {
-                            setSelectedCollection(collection);
+                            setSelectedCollection(
+                              collection,
+                            );
                             setOpenMenu(null);
                           }}
                           className="flex w-full items-center gap-2 px-3 py-2.5 text-left text-sm text-neutral-300 transition hover:bg-neutral-900 hover:text-white"
@@ -498,7 +585,11 @@ export default function Collections() {
                         {/* Delete Collection */}
                         <button
                           type="button"
-                          onClick={() => handleDeleteCollection(collection.id)}
+                          onClick={() =>
+                            handleDeleteCollection(
+                              collection.collection_id,
+                            )
+                          }
                           className="flex w-full items-center gap-2 px-3 py-2.5 text-left text-sm text-red-400 transition hover:bg-neutral-900"
                         >
                           <Trash2 size={15} />
@@ -523,6 +614,7 @@ export default function Collections() {
                 <div className="mt-5 flex items-center justify-between border-t border-neutral-800 pt-4">
                   <div className="flex items-center gap-1.5 text-xs text-neutral-500">
                     <FileText size={14} />
+
                     {collection.documents.length}{" "}
                     {collection.documents.length === 1
                       ? "document"
@@ -530,7 +622,7 @@ export default function Collections() {
                   </div>
 
                   <span className="text-xs text-neutral-600">
-                    {collection.updatedAt}
+                    Collection
                   </span>
                 </div>
               </div>
