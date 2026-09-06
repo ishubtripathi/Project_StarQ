@@ -1,9 +1,11 @@
 interface ChatHeaderProps {
   documentCount?: number;
+  collectionName?: string;
 }
 
 export default function ChatHeader({
   documentCount = 0,
+  collectionName,
 }: ChatHeaderProps) {
   return (
     <header className="flex h-16 shrink-0 items-center justify-between border-b border-neutral-800 bg-[#0b0b0b] px-4 sm:px-6">
@@ -13,18 +15,16 @@ export default function ChatHeader({
         </div>
 
         <div className="min-w-0">
-          <h1 className="truncate text-sm font-semibold text-white">
-            StarQ
-          </h1>
+          <h1 className="truncate text-sm font-semibold text-white">StarQ</h1>
 
           <p className="truncate text-xs text-neutral-500">
-            {documentCount > 0
-              ? `Chatting with ${documentCount} ${
-                  documentCount === 1
-                    ? "document"
-                    : "documents"
-                }`
-              : "Document Intelligence"}
+            {collectionName
+              ? `Collection: ${collectionName}`
+              : documentCount > 0
+                ? `Chatting with ${documentCount} ${
+                    documentCount === 1 ? "document" : "documents"
+                  }`
+                : "Document Intelligence"}
           </p>
         </div>
       </div>
@@ -34,10 +34,7 @@ export default function ChatHeader({
           <div className="h-2 w-2 shrink-0 rounded-full bg-green-500" />
 
           <span className="text-xs text-neutral-400">
-            {documentCount}{" "}
-            {documentCount === 1
-              ? "document"
-              : "documents"}
+            {documentCount} {documentCount === 1 ? "document" : "documents"}
           </span>
         </div>
       )}

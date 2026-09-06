@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   ExternalLink,
   FileText,
@@ -9,6 +10,7 @@ import {
 } from "lucide-react";
 
 import { useDocuments } from "../context/DocumentContext";
+import { setActiveDocument } from "../services/activeDocument";
 
 interface CollectionDocument {
   document_id: string;
@@ -77,6 +79,8 @@ export default function Collections() {
 
   const [openMenu, setOpenMenu] = useState<string | null>(null);
 
+  const navigate = useNavigate();
+
   const { documents } = useDocuments();
   const [selectedDocumentIds, setSelectedDocumentIds] = useState<string[]>([]);
 
@@ -89,6 +93,19 @@ export default function Collections() {
         ? current.filter((id) => id !== documentId)
         : [...current, documentId],
     );
+  };
+
+  const handleChatWithCollection = (collection: Collection) => {
+    if (collection.documents.length === 0) {
+      return;
+    }
+
+    setActiveDocument({
+      collection_name: collection.name,
+      documents: collection.documents,
+    });
+
+    navigate("/chat");
   };
 
   const handleCreateCollection = () => {
@@ -179,6 +196,7 @@ export default function Collections() {
           <button
             type="button"
             disabled={selectedCollection.documents.length === 0}
+            onClick={() => handleChatWithCollection(selectedCollection)}
             className="rounded-lg bg-white px-4 py-2.5 text-sm font-medium text-black transition hover:bg-neutral-200 disabled:cursor-not-allowed disabled:opacity-40"
           >
             Chat with Collection

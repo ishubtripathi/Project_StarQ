@@ -89,7 +89,10 @@ export default function Chat() {
 
   return (
     <div className="flex h-screen flex-col bg-[#0b0b0b]">
-      <ChatHeader documentCount={activeDocument?.documents.length ?? 0} />
+      <ChatHeader
+        documentCount={activeDocument?.documents.length ?? 0}
+        collectionName={activeDocument?.collection_name}
+      />
 
       <ChatMessages messages={messages} loading={loading} />
 
