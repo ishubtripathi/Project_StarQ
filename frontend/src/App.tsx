@@ -8,18 +8,22 @@ import Chat from "./pages/Chat";
 import Collections from "./pages/Collections";
 import Settings from "./pages/Settings";
 
+import { DocumentProvider } from "./context/DocumentContext";
+
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route element={<AppLayout />}>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/documents" element={<Documents />} />
-          <Route path="/chat" element={<Chat />} />
-          <Route path="/collections" element={<Collections />} />
-          <Route path="/settings" element={<Settings />} />
-        </Route>
-      </Routes>
+      <DocumentProvider>
+        <Routes>
+          <Route element={<AppLayout />}>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/documents" element={<Documents />} />
+            <Route path="/chat" element={<Chat />} />
+            <Route path="/collections" element={<Collections />} />
+            <Route path="/settings" element={<Settings />} />
+          </Route>
+        </Routes>
+      </DocumentProvider>
     </BrowserRouter>
   );
 }

@@ -4,6 +4,10 @@ import UploadZone from "../components/documents/UploadZone";
 import UploadStatus from "../components/documents/UploadStatus";
 import DocumentList from "../components/documents/DocumentList";
 import DocumentDetails from "../components/documents/DocumentDetails";
+import {
+  useDocuments,
+  type DocumentItem,
+} from "../context/DocumentContext";
 
 import {
   uploadMultipleDocuments,
@@ -14,18 +18,6 @@ import { setActiveDocument } from "../services/activeDocument";
 
 type UploadState = "idle" | "uploading" | "success" | "error";
 
-export interface DocumentItem {
-  id: string;
-  name: string;
-  type: string;
-  status: string;
-  pages?: number | null;
-  characters?: number | null;
-  images?: number | null;
-  tables?: number | null;
-  date: string;
-}
-
 export default function Documents() {
   // ==========================================================
   // STATE
@@ -35,30 +27,7 @@ export default function Documents() {
 
   const [message, setMessage] = useState("");
 
-  const [documents, setDocuments] = useState<DocumentItem[]>([
-    {
-      id: "demo-1",
-      name: "annual-report.pdf",
-      type: "pdf",
-      status: "processed",
-      pages: 102,
-      characters: 24580,
-      images: 13,
-      tables: 8,
-      date: "Today",
-    },
-    {
-      id: "demo-2",
-      name: "financial-data.csv",
-      type: "csv",
-      status: "processed",
-      pages: null,
-      characters: null,
-      images: null,
-      tables: null,
-      date: "Yesterday",
-    },
-  ]);
+  const { documents, setDocuments } = useDocuments();
 
   const [selectedDocument, setSelectedDocument] = useState<DocumentItem | null>(
     null,
